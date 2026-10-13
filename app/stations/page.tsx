@@ -40,6 +40,7 @@ export default function StationsPage() {
   const [locating, setLocating] = useState(false);
   const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [locationError, setLocationError] = useState<string | null>(null);
+  const [selectedBrand, setSelectedBrand] = useState<string>("ALL");
 
   const fetchStations = useCallback(async (lat?: number, lng?: number) => {
     setLoading(true);
@@ -147,6 +148,23 @@ export default function StationsPage() {
         )}
       </div>
 
+      {/* Brand Filters */}
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+        {["ALL", "IndianOil", "Bharat Petroleum", "HPCL", "Shell", "Nayara"].map((brand) => (
+          <button
+            key={brand}
+            onClick={() => setSelectedBrand(brand)}
+            className={`rounded-xl px-3 py-1.5 text-xs font-semibold whitespace-nowrap transition ${
+              selectedBrand === brand
+                ? "bg-amber-500/20 text-amber-300 border border-amber-500/40"
+                : "bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-zinc-200"
+            }`}
+          >
+            {brand}
+          </button>
+        ))}
+      </div>
+
       {/* Stations List */}
       <section className="flex flex-col gap-3">
         {loading ? (
@@ -154,20 +172,22 @@ export default function StationsPage() {
             <Loader2 className="h-6 w-6 animate-spin text-amber-400" />
             <p className="text-xs">Finding nearest petrol stations...</p>
           </div>
-        ) : stations.length === 0 ? (
+        ) : stations.filter((s) => selectedBrand === "ALL" || s.brand.toLowerCase().includes(selectedBrand.toLowerCase())).length === 0 ? (
           <div className="rounded-2xl border border-dashed border-zinc-800 p-8 text-center">
             <Fuel className="mx-auto h-8 w-8 text-zinc-600 mb-2" />
-            <p className="text-sm font-semibold text-zinc-300">No stations detected</p>
+            <p className="text-sm font-semibold text-zinc-300">No stations found for &quot;{selectedBrand}&quot;</p>
             <button
-              onClick={requestGeolocation}
+              onClick={() => setSelectedBrand("ALL")}
               className="mt-4 rounded-xl bg-amber-500 px-4 py-2 text-xs font-semibold text-zinc-950 hover:bg-amber-400"
             >
-              Retry Search
+              Show All Brands
             </button>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {stations.map((st) => (
+            {stations
+              .filter((s) => selectedBrand === "ALL" || s.brand.toLowerCase().includes(selectedBrand.toLowerCase()))
+              .map((st) => (
               <div
                 key={st.id}
                 className="group rounded-2xl border border-zinc-800 bg-zinc-900/90 p-4 transition hover:border-zinc-700 shadow-md flex flex-col justify-between"
