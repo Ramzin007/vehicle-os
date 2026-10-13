@@ -36,6 +36,7 @@ interface MaintenanceTask {
 export default function MaintenancePage() {
   const { activeVehicle, refreshVehicles } = useVehicle();
   const [tasks, setTasks] = useState<MaintenanceTask[]>([]);
+  const [serviceExpenseTotal, setServiceExpenseTotal] = useState<number>(0);
   const [_loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"ACTIVE" | "COMPLETED" | "ALL">("ACTIVE");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -47,10 +48,20 @@ export default function MaintenancePage() {
     if (!activeVehicle) return;
     setLoading(true);
     try {
-      const res = await fetch(`/api/maintenance?vehicleId=${activeVehicle.id}`);
-      const data = await res.json();
-      if (data.success) {
-        setTasks(data.tasks || []);
+      const [maintRes, expRes] = await Promise.all([
+        fetch(`/api/maintenance?vehicleId=${activeVehicle.id}`),
+        fetch(`/api/expenses?vehicleId=${activeVehicle.id}`),
+      ]);
+      const [maintData, expData] = await Promise.all([maintRes.json(), expRes.json()]);
+
+      if (maintData.success) {
+        setTasks(maintData.tasks || []);
+      }
+      if (expData.success && Array.isArray(expData.expenses)) {
+        const serviceTotal = expData.expenses
+          .filter((e: { category: string; amount: number }) => e.category === "SERVICE" || e.category === "PARTS")
+          .reduce((acc: number, e: { amount: number }) => acc + (e.amount || 0), 0);
+        setServiceExpenseTotal(serviceTotal);
       }
     } catch (e) {
       console.error(e);
@@ -165,7 +176,7 @@ export default function MaintenancePage() {
           <p className="text-[10px] uppercase font-semibold text-zinc-500">Total Spent on Care</p>
           <div className="mt-1 flex items-baseline gap-1.5">
             <span className="text-2xl font-bold text-amber-300">
-              ₹{tasks.reduce((acc, t) => acc + (t.cost || 0), 0).toLocaleString()}
+              ₹{serviceExpenseTotal.toLocaleString()}
             </span>
           </div>
         </div>

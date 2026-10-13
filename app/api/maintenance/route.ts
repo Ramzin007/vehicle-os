@@ -112,21 +112,54 @@ export async function PATCH(req: Request) {
         data.dueDate = nextDate;
       }
 
-      // Record service expense if cost provided
-      const cost = updates.cost ?? currentTask.cost;
-      if (cost && cost > 0) {
-        await prisma.expense.create({
-          data: {
-            vehicleId: currentTask.vehicleId,
-            date: completionDate,
-            category: "SERVICE",
-            amount: cost,
-            title: `Service: ${currentTask.title}`,
-            notes: updates.notes || currentTask.notes || `Completed at ${updates.lastCompletedOdometer || "N/A"} km`,
-            odometer: updates.lastCompletedOdometer || null,
-            referenceId: currentTask.id,
-          },
+      // Update vehicle odometer if completed odometer is higher
+      if (updates.lastCompletedOdometer) {
+        const vehicle = await prisma.vehicle.findUnique({
+          where: { id: currentTask.vehicleId },
         });
+        if (vehicle && updates.lastCompletedOdometer > vehicle.currentOdometer) {
+          await prisma.vehicle.update({
+            where: { id: vehicle.id },
+            data: { currentOdometer: updates.lastCompletedOdometer },
+          });
+        }
+      }
+
+      // Record service expense if cost provided (prevent duplicate for same task id and date)
+      const cost = updates.cost !== undefined ? updates.cost : currentTask.cost;
+      if (cost && cost > 0) {
+        // Save the updated cost on the task itself too
+        data.cost = cost;
+
+        // Upsert expense record with referenceId = task.id to prevent duplicates
+        const existingExpense = await prisma.expense.findFirst({
+          where: { referenceId: currentTask.id },
+        });
+
+        if (existingExpense) {
+          await prisma.expense.update({
+            where: { id: existingExpense.id },
+            data: {
+              amount: cost,
+              date: completionDate,
+              odometer: updates.lastCompletedOdometer || null,
+              notes: updates.notes || currentTask.notes || `Completed at ${updates.lastCompletedOdometer || "N/A"} km`,
+            },
+          });
+        } else {
+          await prisma.expense.create({
+            data: {
+              vehicleId: currentTask.vehicleId,
+              date: completionDate,
+              category: "SERVICE",
+              amount: cost,
+              title: `Service: ${currentTask.title}`,
+              notes: updates.notes || currentTask.notes || `Completed at ${updates.lastCompletedOdometer || "N/A"} km`,
+              odometer: updates.lastCompletedOdometer || null,
+              referenceId: currentTask.id,
+            },
+          });
+        }
       }
     }
 
