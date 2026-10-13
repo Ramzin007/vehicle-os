@@ -14,7 +14,7 @@ export default function PwaRegister() {
 
   useEffect(() => {
     // 1. Register service worker
-    if ("serviceWorker" in navigator && process.env.NODE_ENV === "production") {
+    if ("serviceWorker" in navigator) {
       navigator.serviceWorker
         .register("/sw.js")
         .then((reg) => console.log("VehicleOS PWA SW registered:", reg.scope))
