@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useVehicle } from "@/components/context/vehicle-context";
 import AddExpenseModal from "@/components/modals/add-expense-modal";
+import MonthlySpendChart from "@/components/expenses/monthly-spend-chart";
 import {
   ReceiptText,
   Plus,
@@ -165,6 +166,11 @@ export default function ExpensesPage() {
               </div>
             )}
           </div>
+
+          {/* Monthly Spending Cadence Bar Chart */}
+          {summary && summary.monthlyBreakdown.length > 0 && (
+            <MonthlySpendChart monthlyData={summary.monthlyBreakdown} />
+          )}
         </div>
 
         {/* Right Column: Filter & Transaction Feed (lg: 7 cols) */}
