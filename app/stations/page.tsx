@@ -148,6 +148,39 @@ export default function StationsPage() {
         )}
       </div>
 
+      {/* Direct Live Google Maps Real-Time Launch Button */}
+      <a
+        href={
+          userCoords
+            ? `https://www.google.com/maps/search/petrol+pump/@${userCoords.lat},${userCoords.lng},14z`
+            : "https://www.google.com/maps/search/petrol+pump+near+me"
+        }
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center justify-between rounded-2xl border border-amber-500/40 bg-gradient-to-r from-amber-500/15 via-zinc-900 to-zinc-900 p-4 transition hover:border-amber-500/60 shadow-lg group"
+      >
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500 text-zinc-950 font-bold shrink-0 shadow-md">
+            <Navigation className="h-5 w-5" />
+          </div>
+          <div>
+            <p className="text-xs font-bold text-zinc-100 flex items-center gap-1.5">
+              <span>Open Live Google Maps Radar</span>
+              <span className="rounded bg-amber-500/20 px-1.5 py-0.5 text-[10px] font-semibold text-amber-300">
+                Live Traffic & Fuel Prices
+              </span>
+            </p>
+            <p className="text-[11px] text-zinc-400 mt-0.5">
+              Launch turn-by-turn navigation directly to the nearest open pump
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-1 text-xs font-bold text-amber-400 group-hover:text-amber-300 shrink-0">
+          <span>Open Maps</span>
+          <ExternalLink className="h-4 w-4" />
+        </div>
+      </a>
+
       {/* Brand Filters */}
       <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
         {["ALL", "IndianOil", "Bharat Petroleum", "HPCL", "Shell", "Nayara"].map((brand) => (
@@ -232,7 +265,11 @@ export default function StationsPage() {
                     </div>
 
                     <a
-                      href={st.mapsUrl}
+                      href={
+                        userCoords
+                          ? `https://www.google.com/maps/dir/?api=1&origin=${userCoords.lat},${userCoords.lng}&destination=${encodeURIComponent(`${st.name} ${st.address}`)}`
+                          : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${st.name} ${st.brand}`)}`
+                      }
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-1.5 rounded-xl bg-zinc-800 px-3 py-1.5 text-xs font-semibold text-zinc-200 transition hover:bg-zinc-700 hover:text-white"
