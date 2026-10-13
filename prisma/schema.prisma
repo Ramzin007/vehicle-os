@@ -1,15 +1,110 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client"
-  output   = "../app/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
+}
+
+model Vehicle {
+  id                 String             @id @default(cuid())
+  name               String             // e.g. "TVS Ronin"
+  model              String             // e.g. "225 — Lightning Black"
+  type               String             @default("MOTORCYCLE") // MOTORCYCLE, CAR, SCOOTER, OTHER
+  make               String             @default("TVS")
+  year               Int?               @default(2024)
+  registrationNumber String?            @default("KL 10 AV 4242")
+  vin                String?
+  color              String?            @default("Lightning Black")
+  fuelType           String             @default("PETROL") // PETROL, DIESEL, ELECTRIC, CNG, HYBRID
+  tankCapacity       Float?             @default(14.0) // Liters
+  currentOdometer    Float              @default(4350)
+  isDefault          Boolean            @default(true)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  fuelLogs           FuelLog[]
+  maintenanceTasks   MaintenanceTask[]
+  documents          VehicleDocument[]
+  expenses           Expense[]
+}
+
+model FuelLog {
+  id                 String    @id @default(cuid())
+  vehicleId          String
+  vehicle            Vehicle   @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  date               DateTime  @default(now())
+  odometer           Float
+  liters             Float
+  pricePerLiter      Float
+  totalCost          Float
+  isFullTank         Boolean   @default(true)
+  missedRefuel       Boolean   @default(false)
+  stationName        String?
+  notes              String?
+  calculatedEconomy  Float?    // km per liter
+  calculatedDistance Float?    // km since last refuel
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  @@index([vehicleId, date])
+}
+
+model MaintenanceTask {
+  id                    String    @id @default(cuid())
+  vehicleId             String
+  vehicle               Vehicle   @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  title                 String
+  category              String    @default("ROUTINE") // ROUTINE, OIL, TIRES, BRAKES, CHAIN, ELECTRICAL, REPAIR, INSPECTION
+  status                String    @default("PENDING") // PENDING, DUE_SOON, OVERDUE, COMPLETED
+  priority              String    @default("MEDIUM") // LOW, MEDIUM, HIGH, URGENT
+  dueOdometer           Float?
+  dueDate               DateTime?
+  intervalKm            Float?
+  intervalMonths        Int?
+  lastCompletedOdometer Float?
+  lastCompletedDate     DateTime?
+  cost                  Float?    @default(0)
+  serviceCenter         String?
+  notes                 String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([vehicleId, status])
+}
+
+model VehicleDocument {
+  id             String    @id @default(cuid())
+  vehicleId      String
+  vehicle        Vehicle   @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  title          String    // e.g. "Registration Certificate (RC)", "Insurance Policy"
+  type           String    @default("RC") // RC, INSURANCE, PUC, LICENSE, FITNESS, OTHER
+  documentNumber String?
+  issueDate      DateTime?
+  expiryDate     DateTime?
+  provider       String?   // e.g. "HDFC ERGO", "MVD Kerala"
+  notes          String?
+  fileUrl        String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([vehicleId, type])
+}
+
+model Expense {
+  id          String    @id @default(cuid())
+  vehicleId   String
+  vehicle     Vehicle   @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  date        DateTime  @default(now())
+  category    String    @default("OTHER") // FUEL, SERVICE, PARTS, INSURANCE, TOLL, PARKING, ACCESSORIES, WASH, FINE, OTHER
+  amount      Float
+  title       String
+  notes       String?
+  odometer    Float?
+  referenceId String?   // optional reference to FuelLog or MaintenanceTask
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([vehicleId, date])
 }
