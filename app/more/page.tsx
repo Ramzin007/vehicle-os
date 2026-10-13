@@ -17,6 +17,8 @@ import {
   CheckCircle2,
   ChevronRight,
   Loader2,
+  Trash2,
+  AlertTriangle,
 } from "lucide-react";
 
 export default function MorePage() {
@@ -24,11 +26,39 @@ export default function MorePage() {
   const [isAddVehicleOpen, setIsAddVehicleOpen] = useState(false);
   const [resetting, setResetting] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const [vehicleToDelete, setVehicleToDelete] = useState<{ id: string; name: string } | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3000);
+  };
+
+  const handleDeleteVehicle = async () => {
+    if (!vehicleToDelete) return;
+    setDeletingId(vehicleToDelete.id);
+    try {
+      const res = await fetch(`/api/vehicles?id=${encodeURIComponent(vehicleToDelete.id)}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast(`Vehicle "${vehicleToDelete.name}" removed successfully`);
+        setVehicleToDelete(null);
+        await refreshVehicles();
+        if (data.newDefaultId) {
+          setActiveVehicleId(data.newDefaultId);
+        }
+      } else {
+        alert(data.error || "Failed to remove vehicle");
+      }
+    } catch (e) {
+      console.error(e);
+      alert("Error removing vehicle");
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   const handleResetData = async () => {
@@ -181,31 +211,64 @@ export default function MorePage() {
 
             <div className="flex flex-col gap-2">
               {vehicles.map((v) => (
-                <button
+                <div
                   key={v.id}
-                  onClick={() => setActiveVehicleId(v.id)}
-                  className={`flex items-center justify-between rounded-2xl border p-3.5 text-left transition ${
+                  className={`group flex items-center justify-between rounded-2xl border p-3.5 transition ${
                     v.id === activeVehicle?.id
                       ? "border-emerald-500/50 bg-emerald-500/10 text-emerald-300"
                       : "border-zinc-800 bg-zinc-950 text-zinc-300 hover:border-zinc-700 hover:bg-zinc-900"
                   }`}
                 >
-                  <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => setActiveVehicleId(v.id)}
+                    className="flex flex-1 items-center gap-3 text-left overflow-hidden mr-2"
+                  >
                     {v.type === "MOTORCYCLE" ? (
-                      <Bike className="h-4.5 w-4.5 text-emerald-400 shrink-0" />
+                      <Bike className="h-5 w-5 text-emerald-400 shrink-0" />
                     ) : (
-                      <Car className="h-4.5 w-4.5 text-cyan-400 shrink-0" />
+                      <Car className="h-5 w-5 text-cyan-400 shrink-0" />
                     )}
-                    <div>
-                      <p className="text-xs font-bold">{v.name}</p>
-                      <p className="text-[11px] text-zinc-500">{v.model} • {v.currentOdometer.toLocaleString()} km</p>
+                    <div className="min-w-0 flex-1 truncate">
+                      <div className="flex items-center gap-2">
+                        <p className="text-xs font-bold truncate">{v.name}</p>
+                        {v.id === activeVehicle?.id && (
+                          <span className="rounded-full bg-emerald-500/20 px-2 py-0.5 text-[10px] font-semibold text-emerald-400">
+                            Active
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-[11px] text-zinc-500 truncate">
+                        {v.model} • {v.currentOdometer.toLocaleString()} km
+                      </p>
                     </div>
-                  </div>
+                  </button>
 
-                  {v.id === activeVehicle?.id && (
-                    <CheckCircle2 className="h-4.5 w-4.5 text-emerald-400 shrink-0" />
-                  )}
-                </button>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    {v.id === activeVehicle?.id ? (
+                      <CheckCircle2 className="h-4.5 w-4.5 text-emerald-400" />
+                    ) : (
+                      <button
+                        onClick={() => setActiveVehicleId(v.id)}
+                        className="rounded-lg border border-zinc-700/60 bg-zinc-800/80 px-2 py-1 text-[11px] font-semibold text-zinc-300 hover:bg-zinc-700 hover:text-white"
+                      >
+                        Select
+                      </button>
+                    )}
+
+                    {vehicles.length > 1 && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setVehicleToDelete({ id: v.id, name: v.name });
+                        }}
+                        title={`Remove ${v.name}`}
+                        className="rounded-lg p-1.5 text-zinc-500 hover:text-red-400 hover:bg-red-500/10 transition"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    )}
+                  </div>
+                </div>
               ))}
             </div>
           </section>
@@ -308,6 +371,54 @@ export default function MorePage() {
           isOpen={isAddVehicleOpen}
           onClose={() => setIsAddVehicleOpen(false)}
         />
+      )}
+
+      {/* Delete Vehicle Confirmation Modal */}
+      {vehicleToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in">
+          <div className="w-full max-w-sm rounded-3xl border border-red-500/30 bg-zinc-900 p-6 shadow-2xl">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-red-500/10 text-red-400 mb-4">
+              <AlertTriangle className="h-6 w-6" />
+            </div>
+
+            <h3 className="text-base font-bold text-zinc-100">
+              Remove Vehicle?
+            </h3>
+            <p className="text-xs text-zinc-400 mt-2 leading-relaxed">
+              Are you sure you want to remove <strong className="text-zinc-200">{vehicleToDelete.name}</strong> from your garage?
+              All associated fuel logs, service history, and documents for this vehicle will also be deleted.
+            </p>
+
+            <div className="mt-6 flex gap-3">
+              <button
+                type="button"
+                onClick={() => setVehicleToDelete(null)}
+                disabled={Boolean(deletingId)}
+                className="flex-1 rounded-2xl border border-zinc-800 bg-zinc-950 py-2.5 text-xs font-semibold text-zinc-400 hover:bg-zinc-800 transition"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleDeleteVehicle}
+                disabled={Boolean(deletingId)}
+                className="flex-1 flex items-center justify-center gap-2 rounded-2xl bg-red-500 py-2.5 text-xs font-bold text-white hover:bg-red-600 transition shadow-lg shadow-red-500/20"
+              >
+                {deletingId ? (
+                  <>
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    Removing...
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="h-3.5 w-3.5" />
+                    Delete
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

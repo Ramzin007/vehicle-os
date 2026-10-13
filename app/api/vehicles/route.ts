@@ -122,3 +122,60 @@ export async function PATCH(req: Request) {
     return NextResponse.json({ success: false, error: String(error) }, { status: 400 });
   }
 }
+
+export async function DELETE(req: Request) {
+  try {
+    const user = await getSessionUser();
+    if (!user) {
+      return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+
+    if (!id) {
+      return NextResponse.json({ success: false, error: "Vehicle id is required" }, { status: 400 });
+    }
+
+    // Verify ownership
+    const existing = await prisma.vehicle.findFirst({
+      where: { id, userId: user.id },
+    });
+    if (!existing) {
+      return NextResponse.json({ success: false, error: "Vehicle not found" }, { status: 404 });
+    }
+
+    // Prevent deleting if it's the only vehicle in garage
+    const vehicleCount = await prisma.vehicle.count({
+      where: { userId: user.id },
+    });
+    if (vehicleCount <= 1) {
+      return NextResponse.json(
+        { success: false, error: "You must keep at least one vehicle in your garage." },
+        { status: 400 }
+      );
+    }
+
+    // Delete vehicle (cascades logs, tasks, documents, expenses)
+    await prisma.vehicle.delete({
+      where: { id },
+    });
+
+    // If deleted vehicle was default or active, make another vehicle default
+    const remaining = await prisma.vehicle.findFirst({
+      where: { userId: user.id },
+      orderBy: { createdAt: "asc" },
+    });
+    if (remaining && existing.isDefault) {
+      await prisma.vehicle.update({
+        where: { id: remaining.id },
+        data: { isDefault: true },
+      });
+    }
+
+    return NextResponse.json({ success: true, newDefaultId: remaining?.id });
+  } catch (error) {
+    console.error("Vehicles DELETE error:", error);
+    return NextResponse.json({ success: false, error: String(error) }, { status: 500 });
+  }
+}
