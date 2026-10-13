@@ -136,11 +136,47 @@ export default function MaintenancePage() {
 
         <button
           onClick={() => setIsAddModalOpen(true)}
-          className="flex items-center gap-1.5 rounded-xl bg-cyan-500 px-3 py-2 text-xs font-semibold text-zinc-950 transition hover:bg-cyan-400 shadow-lg shadow-cyan-500/20"
+          className="flex items-center gap-1.5 rounded-xl bg-cyan-500 px-3.5 py-2.5 text-xs font-bold text-zinc-950 transition hover:bg-cyan-400 shadow-lg shadow-cyan-500/20"
         >
           <Plus className="h-4 w-4" />
-          <span>New Task</span>
+          <span>Schedule Service</span>
         </button>
+      </div>
+
+      {/* Maintenance Health Summary Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/80 p-3.5">
+          <p className="text-[10px] uppercase font-semibold text-zinc-500">Upcoming Services</p>
+          <div className="mt-1 flex items-baseline gap-1.5">
+            <span className="text-2xl font-bold text-cyan-400">{pendingCount}</span>
+            <span className="text-xs text-zinc-400">tasks</span>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/80 p-3.5">
+          <p className="text-[10px] uppercase font-semibold text-zinc-500">Service History</p>
+          <div className="mt-1 flex items-baseline gap-1.5">
+            <span className="text-2xl font-bold text-emerald-400">{completedCount}</span>
+            <span className="text-xs text-zinc-400">completed</span>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/80 p-3.5">
+          <p className="text-[10px] uppercase font-semibold text-zinc-500">Total Spent on Care</p>
+          <div className="mt-1 flex items-baseline gap-1.5">
+            <span className="text-2xl font-bold text-amber-300">
+              ₹{tasks.reduce((acc, t) => acc + (t.cost || 0), 0).toLocaleString()}
+            </span>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/80 p-3.5">
+          <p className="text-[10px] uppercase font-semibold text-zinc-500">Current Odometer</p>
+          <div className="mt-1 flex items-baseline gap-1.5">
+            <span className="text-2xl font-bold text-zinc-100">{currentOdometer.toLocaleString()}</span>
+            <span className="text-xs text-zinc-400">km</span>
+          </div>
+        </div>
       </div>
 
       {/* Tabs */}
