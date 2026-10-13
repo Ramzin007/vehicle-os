@@ -22,6 +22,25 @@ export default function AddDocumentModal({ isOpen, onClose, onSuccess }: AddDocu
   const [issueDate, setIssueDate] = useState("");
   const [expiryDate, setExpiryDate] = useState("");
   const [notes, setNotes] = useState("");
+  const [fileUrl, setFileUrl] = useState<string | null>(null);
+  const [fileName, setFileName] = useState<string | null>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      setError("File size exceeds 5MB limit");
+      return;
+    }
+
+    setFileName(file.name);
+    const reader = new FileReader();
+    reader.onload = () => {
+      setFileUrl(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
 
   if (!isOpen) return null;
 
@@ -62,6 +81,7 @@ export default function AddDocumentModal({ isOpen, onClose, onSuccess }: AddDocu
           issueDate: issueDate ? new Date(issueDate).toISOString() : null,
           expiryDate: expiryDate ? new Date(expiryDate).toISOString() : null,
           notes: notes || null,
+          fileUrl: fileUrl || null,
         }),
       });
 
@@ -188,6 +208,38 @@ export default function AddDocumentModal({ isOpen, onClose, onSuccess }: AddDocu
               onChange={(e) => setNotes(e.target.value)}
               className="mt-1.5 w-full rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-600 focus:border-blue-500 focus:outline-none"
             />
+          </div>
+
+          {/* Document Attachment / Photo */}
+          <div>
+            <label className="text-xs font-medium text-zinc-400">Attach Document Scan or Photo</label>
+            <div className="mt-1.5 flex items-center gap-3">
+              <label className="flex-1 flex items-center justify-center gap-2 rounded-xl border border-dashed border-zinc-700 bg-zinc-950/60 p-3 text-xs text-zinc-400 hover:border-blue-500 hover:text-blue-400 cursor-pointer transition">
+                <input
+                  type="file"
+                  accept="image/*,application/pdf"
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
+                <FileText className="h-4 w-4 shrink-0 text-blue-400" />
+                <span className="truncate">
+                  {fileName ? fileName : "Upload RC / Insurance photo (Max 5MB)"}
+                </span>
+              </label>
+
+              {fileUrl && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFileUrl(null);
+                    setFileName(null);
+                  }}
+                  className="text-xs text-red-400 hover:text-red-300 p-2"
+                >
+                  Clear
+                </button>
+              )}
+            </div>
           </div>
 
           <div className="mt-2 flex gap-3">
