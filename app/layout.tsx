@@ -1,7 +1,8 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import AppShell from "@/components/layout/app-shell";
+import PwaRegister from "@/components/pwa/pwa-register";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,9 +14,27 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const viewport: Viewport = {
+  themeColor: "#09090b",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: "cover",
+};
+
 export const metadata: Metadata = {
-  title: "VehicleOS",
-  description: "Smart vehicle companion dashboard",
+  title: "VehicleOS — Vehicle Companion",
+  description: "Smart mobile-first vehicle companion dashboard for fuel economy, maintenance, documents, and expenses.",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "VehicleOS",
+  },
+  icons: {
+    apple: "/icons/apple-touch-icon.png",
+  },
 };
 
 export default function RootLayout({
@@ -30,6 +49,7 @@ export default function RootLayout({
     >
       <body className="min-h-full">
         <AppShell>{children}</AppShell>
+        <PwaRegister />
       </body>
     </html>
   );
