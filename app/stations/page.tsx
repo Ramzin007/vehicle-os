@@ -166,64 +166,66 @@ export default function StationsPage() {
             </button>
           </div>
         ) : (
-          stations.map((st) => (
-            <div
-              key={st.id}
-              className="group rounded-2xl border border-zinc-800 bg-zinc-900/90 p-4 transition hover:border-zinc-700 shadow-md"
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="text-base font-bold text-zinc-100">
-                      {st.name}
-                    </span>
-
-                    <span
-                      className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold ${
-                        brandColors[st.brand] || "bg-zinc-800 text-zinc-300 border-zinc-700"
-                      }`}
-                    >
-                      {st.brand}
-                    </span>
-                  </div>
-
-                  <p className="mt-1 text-xs text-zinc-400">{st.address}</p>
-
-                  {/* Amenities */}
-                  <div className="mt-2.5 flex flex-wrap gap-1.5">
-                    {st.amenities.map((am, i) => (
-                      <span
-                        key={i}
-                        className="rounded-lg bg-zinc-950 px-2 py-0.5 text-[10px] text-zinc-400 border border-zinc-800"
-                      >
-                        {am}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {stations.map((st) => (
+              <div
+                key={st.id}
+                className="group rounded-2xl border border-zinc-800 bg-zinc-900/90 p-4 transition hover:border-zinc-700 shadow-md flex flex-col justify-between"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-base font-bold text-zinc-100">
+                        {st.name}
                       </span>
-                    ))}
-                  </div>
-                </div>
 
-                <div className="flex flex-col items-end gap-2 shrink-0">
-                  <div className="text-right">
-                    <span className="text-base font-bold text-amber-400">
-                      {st.distanceKm} km
-                    </span>
-                    <p className="text-[10px] text-zinc-500">{st.openStatus}</p>
+                      <span
+                        className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold ${
+                          brandColors[st.brand] || "bg-zinc-800 text-zinc-300 border-zinc-700"
+                        }`}
+                      >
+                        {st.brand}
+                      </span>
+                    </div>
+
+                    <p className="mt-1 text-xs text-zinc-400">{st.address}</p>
+
+                    {/* Amenities */}
+                    <div className="mt-2.5 flex flex-wrap gap-1.5">
+                      {st.amenities.map((am, i) => (
+                        <span
+                          key={i}
+                          className="rounded-lg bg-zinc-950 px-2 py-0.5 text-[10px] text-zinc-400 border border-zinc-800"
+                        >
+                          {am}
+                        </span>
+                      ))}
+                    </div>
                   </div>
 
-                  <a
-                    href={st.mapsUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 rounded-xl bg-zinc-800 px-3 py-1.5 text-xs font-semibold text-zinc-200 transition hover:bg-zinc-700 hover:text-white"
-                  >
-                    <Navigation className="h-3 w-3 text-amber-400" />
-                    <span>Route</span>
-                    <ExternalLink className="h-3 w-3 text-zinc-500" />
-                  </a>
+                  <div className="flex flex-col items-end gap-2 shrink-0">
+                    <div className="text-right">
+                      <span className="text-base font-bold text-amber-400">
+                        {st.distanceKm} km
+                      </span>
+                      <p className="text-[10px] text-zinc-500">{st.openStatus}</p>
+                    </div>
+
+                    <a
+                      href={st.mapsUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1.5 rounded-xl bg-zinc-800 px-3 py-1.5 text-xs font-semibold text-zinc-200 transition hover:bg-zinc-700 hover:text-white"
+                    >
+                      <Navigation className="h-3 w-3 text-amber-400" />
+                      <span>Route</span>
+                      <ExternalLink className="h-3 w-3 text-zinc-500" />
+                    </a>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))
+            ))}
+          </div>
         )}
       </section>
     </div>

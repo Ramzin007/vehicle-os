@@ -198,8 +198,9 @@ export default function MaintenancePage() {
             </button>
           </div>
         ) : (
-          filteredTasks.map((task) => {
-            const isCompleted = task.status === "COMPLETED";
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+            {filteredTasks.map((task) => {
+              const isCompleted = task.status === "COMPLETED";
 
             // Km countdown
             let kmRemaining: number | null = null;
@@ -421,7 +422,8 @@ export default function MaintenancePage() {
                 )}
               </div>
             );
-          })
+          })}
+        </div>
         )}
       </section>
 

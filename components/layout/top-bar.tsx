@@ -2,24 +2,42 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useVehicle } from "@/components/context/vehicle-context";
-import { ChevronDown, Plus, Bike, Car, ShieldCheck, Settings, Check } from "lucide-react";
+import { ChevronDown, Plus, Bike, Car, ShieldCheck, Settings, Check, Fuel, Wrench } from "lucide-react";
 import AddVehicleModal from "@/components/modals/add-vehicle-modal";
+import AddRefuelModal from "@/components/modals/add-refuel-modal";
+import AddServiceModal from "@/components/modals/add-service-modal";
 
 interface TopBarProps {
   title?: string;
 }
 
+const pageTitles: Record<string, string> = {
+  "/": "Dashboard Overview",
+  "/fuel": "Fuel & Refills",
+  "/maintenance": "Service & Maintenance",
+  "/documents": "Vehicle Documents",
+  "/expenses": "Expense Management",
+  "/stations": "Nearby Fuel Stations",
+  "/more": "Garage & Settings",
+};
+
 export default function TopBar({ title }: TopBarProps) {
-  const { vehicles, activeVehicle, setActiveVehicleId } = useVehicle();
+  const pathname = usePathname();
+  const { vehicles, activeVehicle, setActiveVehicleId, refreshVehicles } = useVehicle();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isAddVehicleOpen, setIsAddVehicleOpen] = useState(false);
+  const [isFuelModalOpen, setIsFuelModalOpen] = useState(false);
+  const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
+
+  const currentTitle = title || pageTitles[pathname] || (activeVehicle ? activeVehicle.name : "VehicleOS");
 
   return (
     <>
-      <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-zinc-800/80 bg-zinc-950/90 px-4 backdrop-blur-md">
-        {/* Left: Brand / Title */}
-        <div className="flex items-center gap-2.5">
+      <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-zinc-800/80 bg-zinc-950/90 px-4 md:px-8 backdrop-blur-md">
+        {/* Mobile View: Brand & Title */}
+        <div className="flex md:hidden items-center gap-2.5">
           <Link href="/" className="flex items-center gap-2">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-700 shadow-md shadow-emerald-950/40">
               <ShieldCheck className="h-5 w-5 text-white" />
@@ -38,10 +56,43 @@ export default function TopBar({ title }: TopBarProps) {
           </Link>
         </div>
 
-        {/* Right: Vehicle Selector Pill & Settings */}
-        <div className="flex items-center gap-2">
+        {/* Desktop View: Page Title & Breadcrumb */}
+        <div className="hidden md:flex items-center gap-3">
+          <div>
+            <h1 className="text-lg font-bold tracking-tight text-zinc-100">
+              {currentTitle}
+            </h1>
+            {activeVehicle && (
+              <p className="text-xs text-zinc-400">
+                Active: <span className="text-zinc-200 font-medium">{activeVehicle.name}</span> ({activeVehicle.model})
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Right Side: Responsive Controls */}
+        <div className="flex items-center gap-2.5">
+          {/* Desktop Quick Action Buttons */}
+          <div className="hidden md:flex items-center gap-2">
+            <button
+              onClick={() => setIsFuelModalOpen(true)}
+              className="flex items-center gap-1.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 px-3 py-1.5 text-xs font-semibold text-emerald-300 hover:bg-emerald-500/25 transition"
+            >
+              <Fuel className="h-3.5 w-3.5 text-emerald-400" />
+              <span>Record Refill</span>
+            </button>
+            <button
+              onClick={() => setIsServiceModalOpen(true)}
+              className="flex items-center gap-1.5 rounded-xl bg-cyan-500/15 border border-cyan-500/30 px-3 py-1.5 text-xs font-semibold text-cyan-300 hover:bg-cyan-500/25 transition"
+            >
+              <Wrench className="h-3.5 w-3.5 text-cyan-400" />
+              <span>Log Service</span>
+            </button>
+          </div>
+
+          {/* Mobile Vehicle Selector Pill */}
           {activeVehicle && (
-            <div className="relative">
+            <div className="relative md:hidden">
               <button
                 type="button"
                 onClick={() => setDropdownOpen(!dropdownOpen)}
@@ -52,11 +103,11 @@ export default function TopBar({ title }: TopBarProps) {
                 ) : (
                   <Car className="h-3.5 w-3.5 text-cyan-400" />
                 )}
-                <span className="max-w-[110px] truncate">{activeVehicle.name}</span>
+                <span className="max-w-[100px] truncate">{activeVehicle.name}</span>
                 <ChevronDown className="h-3.5 w-3.5 text-zinc-400" />
               </button>
 
-              {/* Dropdown Menu */}
+              {/* Mobile Dropdown Menu */}
               {dropdownOpen && (
                 <>
                   <div
@@ -120,9 +171,10 @@ export default function TopBar({ title }: TopBarProps) {
             </div>
           )}
 
+          {/* Settings icon */}
           <Link
             href="/more"
-            aria-label="Settings and more"
+            aria-label="Settings and garage"
             className="flex h-9 w-9 items-center justify-center rounded-xl border border-zinc-800 bg-zinc-900 text-zinc-400 transition hover:border-zinc-700 hover:bg-zinc-800 hover:text-zinc-200"
           >
             <Settings className="h-4 w-4" />
@@ -130,10 +182,31 @@ export default function TopBar({ title }: TopBarProps) {
         </div>
       </header>
 
+      {/* Modals */}
       {isAddVehicleOpen && (
         <AddVehicleModal
           isOpen={isAddVehicleOpen}
           onClose={() => setIsAddVehicleOpen(false)}
+        />
+      )}
+      {isFuelModalOpen && (
+        <AddRefuelModal
+          isOpen={isFuelModalOpen}
+          onClose={() => setIsFuelModalOpen(false)}
+          onSuccess={() => {
+            refreshVehicles();
+            window.location.reload();
+          }}
+        />
+      )}
+      {isServiceModalOpen && (
+        <AddServiceModal
+          isOpen={isServiceModalOpen}
+          onClose={() => setIsServiceModalOpen(false)}
+          onSuccess={() => {
+            refreshVehicles();
+            window.location.reload();
+          }}
         />
       )}
     </>

@@ -127,11 +127,12 @@ export default function DocumentsPage() {
             </button>
           </div>
         ) : (
-          documents.map((doc) => (
-            <div
-              key={doc.id}
-              className="group relative rounded-2xl border border-zinc-800 bg-zinc-900/90 p-4 transition hover:border-zinc-700"
-            >
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {documents.map((doc) => (
+              <div
+                key={doc.id}
+                className="group relative rounded-2xl border border-zinc-800 bg-zinc-900/90 p-4 transition hover:border-zinc-700 shadow-md flex flex-col justify-between"
+              >
               <div className="flex items-start justify-between gap-3">
                 <div className="flex-1">
                   <div className="flex flex-wrap items-center gap-2">
@@ -193,7 +194,8 @@ export default function DocumentsPage() {
                 </button>
               </div>
             </div>
-          ))
+          ))}
+        </div>
         )}
       </section>
 
