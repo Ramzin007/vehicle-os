@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useVehicle } from "@/components/context/vehicle-context";
 import { calculateFuelMetrics, type FuelLogItem } from "@/lib/calculations";
 import AddRefuelModal from "@/components/modals/add-refuel-modal";
+import FuelTrendChart from "@/components/fuel/fuel-trend-chart";
 import {
   Fuel,
   Plus,
@@ -144,6 +145,9 @@ export default function FuelPage() {
               </div>
             </div>
           </div>
+
+          {/* Fuel Economy Trend Curve */}
+          <FuelTrendChart logs={logs} averageEconomy={metrics.averageEconomy} />
 
           {/* Efficiency Tips & Insights */}
           <div className="rounded-3xl border border-zinc-800 bg-zinc-900/60 p-5 text-xs text-zinc-400">
