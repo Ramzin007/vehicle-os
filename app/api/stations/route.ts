@@ -97,16 +97,41 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const latStr = searchParams.get("lat");
     const lngStr = searchParams.get("lng");
+    const query = searchParams.get("q");
 
-    // Default to central coordinates if not provided (e.g. Bangalore/Kochi hub)
-    const userLat = latStr ? parseFloat(latStr) : 12.9716;
-    const userLng = lngStr ? parseFloat(lngStr) : 77.5946;
+    let userLat = latStr ? parseFloat(latStr) : null;
+    let userLng = lngStr ? parseFloat(lngStr) : null;
+
+    // If a search query/city is passed, geocode with Photon (OpenStreetMap/Komoot)
+    if (query) {
+      try {
+        const geoRes = await fetch(
+          `https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&limit=1`,
+          { headers: { "User-Agent": "VehicleOS/1.0" } }
+        );
+        if (geoRes.ok) {
+          const geoData = await geoRes.json();
+          if (geoData.features && geoData.features.length > 0) {
+            const coords = geoData.features[0].geometry.coordinates;
+            userLng = coords[0];
+            userLat = coords[1];
+          }
+        }
+      } catch (geoErr) {
+        console.warn("Geocoding failed:", geoErr);
+      }
+    }
+
+    // Default coordinates only if user provides neither GPS nor city search
+    const hasLocation = userLat !== null && userLng !== null;
+    const finalLat = userLat ?? 12.9716;
+    const finalLng = userLng ?? 77.5946;
 
     let stations: Station[] = [];
 
     // Attempt live OpenStreetMap Overpass query with a quick 3.5s timeout
     try {
-      const overpassQuery = `[out:json][timeout:3];node["amenity"="fuel"](around:5000,${userLat},${userLng});out 10;`;
+      const overpassQuery = `[out:json][timeout:3];node["amenity"="fuel"](around:5000,${finalLat},${finalLng});out 10;`;
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 3500);
 
@@ -126,7 +151,7 @@ export async function GET(req: Request) {
           stations = data.elements.map((el: { id: number; lat: number; lon: number; tags?: Record<string, string> }) => {
             const name = el.tags?.name || el.tags?.operator || "Petrol Station";
             const brand = el.tags?.brand || el.tags?.operator || "Fuel Station";
-            const dist = computeHaversineDistance(userLat, userLng, el.lat, el.lon);
+            const dist = computeHaversineDistance(finalLat, finalLng, el.lat, el.lon);
             const amenities: string[] = [];
             if (el.tags?.opening_hours) amenities.push(`Hours: ${el.tags.opening_hours}`);
             if (el.tags?.air) amenities.push("Air");
@@ -153,12 +178,13 @@ export async function GET(req: Request) {
     }
 
     if (stations.length === 0) {
-      stations = getFallbackStations(userLat, userLng);
+      stations = getFallbackStations(finalLat, finalLng);
     }
 
     return NextResponse.json({
       success: true,
-      userLocation: { lat: userLat, lng: userLng },
+      hasLocation,
+      userLocation: { lat: finalLat, lng: finalLng },
       stations,
     });
   } catch (error) {

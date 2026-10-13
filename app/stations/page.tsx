@@ -42,10 +42,23 @@ export default function StationsPage() {
   const [locationError, setLocationError] = useState<string | null>(null);
   const [selectedBrand, setSelectedBrand] = useState<string>("ALL");
 
-  const fetchStations = useCallback(async (lat?: number, lng?: number) => {
+  const [searchCity, setSearchCity] = useState<string>("");
+
+  const fetchStations = useCallback(async (lat?: number, lng?: number, query?: string) => {
     setLoading(true);
     try {
-      const url = lat && lng ? `/api/stations?lat=${lat}&lng=${lng}` : "/api/stations";
+      let url = "/api/stations";
+      const params = new URLSearchParams();
+      if (lat && lng) {
+        params.set("lat", String(lat));
+        params.set("lng", String(lng));
+      }
+      if (query) {
+        params.set("q", query);
+      }
+      if (params.toString()) {
+        url += `?${params.toString()}`;
+      }
       const res = await fetch(url);
       const data = await res.json();
       if (data.success) {
@@ -147,6 +160,34 @@ export default function StationsPage() {
           </span>
         )}
       </div>
+
+      {/* Manual Location Search Bar (For when GPS permissions are blocked or inaccurate) */}
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (searchCity.trim()) {
+            fetchStations(undefined, undefined, searchCity.trim());
+          }
+        }}
+        className="flex items-center gap-2"
+      >
+        <div className="relative flex-1">
+          <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
+          <input
+            type="text"
+            placeholder="Search your city or locality (e.g. Kozhikode, Indiranagar, Kochi)..."
+            value={searchCity}
+            onChange={(e) => setSearchCity(e.target.value)}
+            className="w-full rounded-xl border border-zinc-800 bg-zinc-900/90 pl-10 pr-3 py-2 text-xs text-zinc-200 placeholder-zinc-500 focus:border-amber-500 focus:outline-none"
+          />
+        </div>
+        <button
+          type="submit"
+          className="rounded-xl bg-amber-500 px-3.5 py-2 text-xs font-bold text-zinc-950 hover:bg-amber-400 transition shrink-0"
+        >
+          Search Area
+        </button>
+      </form>
 
       {/* Direct Live Google Maps Real-Time Launch Button */}
       <a
