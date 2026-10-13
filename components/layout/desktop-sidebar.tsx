@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useVehicle } from "@/components/context/vehicle-context";
 import {
   Home,
@@ -19,6 +19,8 @@ import {
   Plus,
   Check,
   Gauge,
+  LogOut,
+  User,
 } from "lucide-react";
 import AddVehicleModal from "@/components/modals/add-vehicle-modal";
 import AddRefuelModal from "@/components/modals/add-refuel-modal";
@@ -36,11 +38,34 @@ const navItems = [
 
 export default function DesktopSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const { vehicles, activeVehicle, setActiveVehicleId, refreshVehicles } = useVehicle();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isAddVehicleOpen, setIsAddVehicleOpen] = useState(false);
   const [isFuelModalOpen, setIsFuelModalOpen] = useState(false);
   const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState<{ name: string; email: string } | null>(null);
+
+  useEffect(() => {
+    fetch("/api/auth/me")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && data.user) {
+          setCurrentUser(data.user);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+      router.push("/login");
+      router.refresh();
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   return (
     <>
@@ -179,7 +204,7 @@ export default function DesktopSidebar() {
           </nav>
         </div>
 
-        {/* Bottom Actions & Quick Telemetry */}
+        {/* Bottom Actions & User Profile */}
         <div className="flex flex-col gap-3 pt-4 border-t border-zinc-800/80">
           <div className="grid grid-cols-2 gap-2">
             <button
@@ -208,6 +233,40 @@ export default function DesktopSidebar() {
                 {activeVehicle.currentOdometer.toLocaleString()} km
               </span>
             </div>
+          )}
+
+          {/* User Account / Sign Out */}
+          {currentUser ? (
+            <div className="flex items-center justify-between rounded-xl bg-zinc-900/80 p-2 border border-zinc-800/80 text-xs">
+              <div className="flex items-center gap-2 truncate">
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/20 text-emerald-300 shrink-0 font-bold text-[11px]">
+                  {currentUser.name.charAt(0).toUpperCase()}
+                </div>
+                <div className="truncate">
+                  <p className="font-semibold text-zinc-200 truncate text-[11px]">
+                    {currentUser.name}
+                  </p>
+                  <p className="text-[10px] text-zinc-500 truncate">
+                    {currentUser.email}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={handleLogout}
+                title="Sign Out"
+                className="text-zinc-500 hover:text-red-400 p-1.5 rounded-lg hover:bg-zinc-800 transition"
+              >
+                <LogOut className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          ) : (
+            <Link
+              href="/login"
+              className="flex items-center justify-center gap-1.5 rounded-xl border border-zinc-800 bg-zinc-900 py-2 text-xs font-medium text-zinc-300 hover:bg-zinc-800"
+            >
+              <User className="h-3.5 w-3.5 text-emerald-400" />
+              <span>Sign In / Demo</span>
+            </Link>
           )}
         </div>
       </aside>

@@ -1,10 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useVehicle } from "@/components/context/vehicle-context";
-import { ChevronDown, Plus, Bike, Car, ShieldCheck, Settings, Check, Fuel, Wrench } from "lucide-react";
+import {
+  ChevronDown,
+  Plus,
+  Bike,
+  Car,
+  ShieldCheck,
+  Settings,
+  Check,
+  Fuel,
+  Wrench,
+  User,
+  LogOut,
+} from "lucide-react";
 import AddVehicleModal from "@/components/modals/add-vehicle-modal";
 import AddRefuelModal from "@/components/modals/add-refuel-modal";
 import AddServiceModal from "@/components/modals/add-service-modal";
@@ -21,15 +33,42 @@ const pageTitles: Record<string, string> = {
   "/expenses": "Expense Management",
   "/stations": "Nearby Fuel Stations",
   "/more": "Garage & Settings",
+  "/login": "Sign In",
+  "/register": "Create Account",
 };
 
 export default function TopBar({ title }: TopBarProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const { vehicles, activeVehicle, setActiveVehicleId, refreshVehicles } = useVehicle();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [isAddVehicleOpen, setIsAddVehicleOpen] = useState(false);
   const [isFuelModalOpen, setIsFuelModalOpen] = useState(false);
   const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState<{ name: string; email: string } | null>(null);
+
+  useEffect(() => {
+    fetch("/api/auth/me")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && data.user) {
+          setCurrentUser(data.user);
+        }
+      })
+      .catch(() => {});
+  }, [pathname]);
+
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+      setUserMenuOpen(false);
+      router.push("/login");
+      router.refresh();
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   const currentTitle = title || pageTitles[pathname] || (activeVehicle ? activeVehicle.name : "VehicleOS");
 
@@ -171,14 +210,82 @@ export default function TopBar({ title }: TopBarProps) {
             </div>
           )}
 
-          {/* Settings icon */}
-          <Link
-            href="/more"
-            aria-label="Settings and garage"
-            className="flex h-9 w-9 items-center justify-center rounded-xl border border-zinc-800 bg-zinc-900 text-zinc-400 transition hover:border-zinc-700 hover:bg-zinc-800 hover:text-zinc-200"
-          >
-            <Settings className="h-4 w-4" />
-          </Link>
+          {/* User Account / Profile Menu Pill */}
+          <div className="relative">
+            <button
+              onClick={() => setUserMenuOpen(!userMenuOpen)}
+              aria-label="User account"
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-zinc-800 bg-zinc-900 text-zinc-300 transition hover:border-zinc-700 hover:bg-zinc-800"
+            >
+              {currentUser ? (
+                <span className="text-xs font-bold text-emerald-400">
+                  {currentUser.name.charAt(0).toUpperCase()}
+                </span>
+              ) : (
+                <User className="h-4 w-4 text-zinc-400" />
+              )}
+            </button>
+
+            {userMenuOpen && (
+              <>
+                <div
+                  className="fixed inset-0 z-40"
+                  onClick={() => setUserMenuOpen(false)}
+                />
+                <div className="absolute right-0 top-full z-50 mt-2 w-56 rounded-2xl border border-zinc-800 bg-zinc-900/98 p-2 shadow-2xl backdrop-blur-xl">
+                  {currentUser ? (
+                    <div>
+                      <div className="px-3 py-2 border-b border-zinc-800/80">
+                        <p className="text-xs font-bold text-zinc-100 truncate">
+                          {currentUser.name}
+                        </p>
+                        <p className="text-[10px] text-zinc-500 truncate mt-0.5">
+                          {currentUser.email}
+                        </p>
+                      </div>
+
+                      <div className="py-1">
+                        <Link
+                          href="/more"
+                          onClick={() => setUserMenuOpen(false)}
+                          className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-xs text-zinc-300 hover:bg-zinc-800 transition"
+                        >
+                          <Settings className="h-3.5 w-3.5 text-zinc-400" />
+                          <span>Garage & Settings</span>
+                        </Link>
+
+                        <button
+                          onClick={handleLogout}
+                          className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-xs font-medium text-red-400 hover:bg-red-500/10 transition"
+                        >
+                          <LogOut className="h-3.5 w-3.5" />
+                          <span>Sign Out</span>
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-1 p-1">
+                      <Link
+                        href="/login"
+                        onClick={() => setUserMenuOpen(false)}
+                        className="flex items-center gap-2 rounded-xl bg-emerald-500/15 border border-emerald-500/30 px-3 py-2 text-xs font-bold text-emerald-300 hover:bg-emerald-500/25 transition"
+                      >
+                        <User className="h-3.5 w-3.5" />
+                        <span>Sign In / Demo</span>
+                      </Link>
+                      <Link
+                        href="/register"
+                        onClick={() => setUserMenuOpen(false)}
+                        className="flex items-center gap-2 rounded-xl px-3 py-2 text-xs text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 transition"
+                      >
+                        <span>Create Account</span>
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </header>
 

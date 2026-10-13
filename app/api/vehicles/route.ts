@@ -1,12 +1,25 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { ensureDefaultVehicle } from "@/lib/seed";
+import { getSessionUser } from "@/lib/auth";
+import { ensureDefaultUserAndVehicle } from "@/lib/seed";
 import { vehicleSchema } from "@/lib/validations";
 
 export async function GET() {
   try {
-    await ensureDefaultVehicle();
+    let user = await getSessionUser();
+
+    // If no user exists anywhere, auto-seed default demo account
+    if (!user) {
+      const userCount = await prisma.user.count();
+      if (userCount === 0) {
+        user = await ensureDefaultUserAndVehicle();
+      } else {
+        return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+      }
+    }
+
     const vehicles = await prisma.vehicle.findMany({
+      where: { userId: user.id },
       orderBy: { createdAt: "asc" },
       include: {
         _count: {
@@ -29,17 +42,24 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
+    const user = await getSessionUser();
+    if (!user) {
+      return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+    }
+
     const json = await req.json();
     const validated = vehicleSchema.parse(json);
 
     if (validated.isDefault) {
       await prisma.vehicle.updateMany({
+        where: { userId: user.id },
         data: { isDefault: false },
       });
     }
 
     const vehicle = await prisma.vehicle.create({
       data: {
+        userId: user.id,
         name: validated.name,
         model: validated.model,
         type: validated.type,
@@ -64,6 +84,11 @@ export async function POST(req: Request) {
 
 export async function PATCH(req: Request) {
   try {
+    const user = await getSessionUser();
+    if (!user) {
+      return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+    }
+
     const json = await req.json();
     const { id, ...data } = json;
 
@@ -71,9 +96,17 @@ export async function PATCH(req: Request) {
       return NextResponse.json({ success: false, error: "Vehicle id is required" }, { status: 400 });
     }
 
+    // Verify ownership
+    const existing = await prisma.vehicle.findFirst({
+      where: { id, userId: user.id },
+    });
+    if (!existing) {
+      return NextResponse.json({ success: false, error: "Vehicle not found" }, { status: 404 });
+    }
+
     if (data.isDefault) {
       await prisma.vehicle.updateMany({
-        where: { id: { not: id } },
+        where: { userId: user.id, id: { not: id } },
         data: { isDefault: false },
       });
     }

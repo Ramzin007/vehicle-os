@@ -1,45 +1,42 @@
 import prisma from "./prisma";
+import { hashPassword } from "./auth";
 
-export async function ensureDefaultVehicle() {
-  const count = await prisma.vehicle.count();
-  if (count > 0) {
-    const defaultVehicle = await prisma.vehicle.findFirst({
-      where: { isDefault: true },
-      include: {
-        fuelLogs: { orderBy: { odometer: "desc" } },
-        maintenanceTasks: { orderBy: { status: "asc" } },
-        documents: true,
-        expenses: { orderBy: { date: "desc" } },
+export async function ensureDefaultUserAndVehicle() {
+  let demoUser = await prisma.user.findUnique({
+    where: { email: "demo@vehicleos.app" },
+  });
+
+  if (!demoUser) {
+    const passwordHash = await hashPassword("demo123");
+    demoUser = await prisma.user.create({
+      data: {
+        email: "demo@vehicleos.app",
+        name: "Ramzin P (TVS Rider)",
+        passwordHash,
       },
     });
-
-    if (defaultVehicle) return defaultVehicle;
-
-    const anyVehicle = await prisma.vehicle.findFirst({
-      include: {
-        fuelLogs: { orderBy: { odometer: "desc" } },
-        maintenanceTasks: { orderBy: { status: "asc" } },
-        documents: true,
-        expenses: { orderBy: { date: "desc" } },
-      },
-    });
-    return anyVehicle;
   }
 
-  // Seed TVS Ronin 225
-  return await seedDatabase();
+  const vehicleCount = await prisma.vehicle.count({
+    where: { userId: demoUser.id },
+  });
+
+  if (vehicleCount === 0) {
+    await seedDatabaseForUser(demoUser.id);
+  }
+
+  return demoUser;
 }
 
-export async function seedDatabase() {
-  // Clear existing if resetting
-  await prisma.expense.deleteMany();
-  await prisma.fuelLog.deleteMany();
-  await prisma.maintenanceTask.deleteMany();
-  await prisma.vehicleDocument.deleteMany();
-  await prisma.vehicle.deleteMany();
+export async function seedDatabaseForUser(userId: string) {
+  // Clear any existing vehicles for this user if resetting
+  await prisma.vehicle.deleteMany({
+    where: { userId },
+  });
 
   const vehicle = await prisma.vehicle.create({
     data: {
+      userId,
       name: "TVS Ronin",
       model: "225 — Lightning Black",
       type: "MOTORCYCLE",

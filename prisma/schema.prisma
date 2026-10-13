@@ -7,8 +7,21 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  name         String
+  passwordHash String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  vehicles     Vehicle[]
+}
+
 model Vehicle {
   id                 String             @id @default(cuid())
+  userId             String
+  user               User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   name               String             // e.g. "TVS Ronin"
   model              String             // e.g. "225 — Lightning Black"
   type               String             @default("MOTORCYCLE") // MOTORCYCLE, CAR, SCOOTER, OTHER
@@ -28,6 +41,8 @@ model Vehicle {
   maintenanceTasks   MaintenanceTask[]
   documents          VehicleDocument[]
   expenses           Expense[]
+
+  @@index([userId])
 }
 
 model FuelLog {
