@@ -63,6 +63,37 @@ export async function POST(req: Request) {
   }
 }
 
+export async function PATCH(req: Request) {
+  try {
+    const json = await req.json();
+    const { id, ...data } = json;
+
+    if (!id) {
+      return NextResponse.json({ success: false, error: "Document id is required" }, { status: 400 });
+    }
+
+    const updatePayload: Record<string, unknown> = {};
+    if (data.title !== undefined) updatePayload.title = data.title;
+    if (data.type !== undefined) updatePayload.type = data.type;
+    if (data.documentNumber !== undefined) updatePayload.documentNumber = data.documentNumber || null;
+    if (data.provider !== undefined) updatePayload.provider = data.provider || null;
+    if (data.issueDate !== undefined) updatePayload.issueDate = data.issueDate ? new Date(data.issueDate) : null;
+    if (data.expiryDate !== undefined) updatePayload.expiryDate = data.expiryDate ? new Date(data.expiryDate) : null;
+    if (data.notes !== undefined) updatePayload.notes = data.notes || null;
+    if (data.fileUrl !== undefined) updatePayload.fileUrl = data.fileUrl || null;
+
+    const updated = await prisma.vehicleDocument.update({
+      where: { id },
+      data: updatePayload,
+    });
+
+    return NextResponse.json({ success: true, document: updated });
+  } catch (error) {
+    console.error("Documents PATCH error:", error);
+    return NextResponse.json({ success: false, error: String(error) }, { status: 400 });
+  }
+}
+
 export async function DELETE(req: Request) {
   try {
     const { searchParams } = new URL(req.url);

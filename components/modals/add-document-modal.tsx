@@ -8,22 +8,33 @@ interface AddDocumentModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  initialData?: {
+    id: string;
+    title: string;
+    type: string;
+    documentNumber?: string | null;
+    provider?: string | null;
+    issueDate?: string | null;
+    expiryDate?: string | null;
+    notes?: string | null;
+    fileUrl?: string | null;
+  } | null;
 }
 
-export default function AddDocumentModal({ isOpen, onClose, onSuccess }: AddDocumentModalProps) {
+export default function AddDocumentModal({ isOpen, onClose, onSuccess, initialData }: AddDocumentModalProps) {
   const { activeVehicle } = useVehicle();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [type, setType] = useState("RC");
-  const [title, setTitle] = useState("Registration Certificate (RC)");
-  const [documentNumber, setDocumentNumber] = useState("");
-  const [provider, setProvider] = useState("");
-  const [issueDate, setIssueDate] = useState("");
-  const [expiryDate, setExpiryDate] = useState("");
-  const [notes, setNotes] = useState("");
-  const [fileUrl, setFileUrl] = useState<string | null>(null);
-  const [fileName, setFileName] = useState<string | null>(null);
+  const [type, setType] = useState(() => initialData?.type || "RC");
+  const [title, setTitle] = useState(() => initialData?.title || "Registration Certificate (RC)");
+  const [documentNumber, setDocumentNumber] = useState(() => initialData?.documentNumber || "");
+  const [provider, setProvider] = useState(() => initialData?.provider || "");
+  const [issueDate, setIssueDate] = useState(() => initialData?.issueDate ? new Date(initialData.issueDate).toISOString().split("T")[0] : "");
+  const [expiryDate, setExpiryDate] = useState(() => initialData?.expiryDate ? new Date(initialData.expiryDate).toISOString().split("T")[0] : "");
+  const [notes, setNotes] = useState(() => initialData?.notes || "");
+  const [fileUrl, setFileUrl] = useState<string | null>(() => initialData?.fileUrl || null);
+  const [fileName, setFileName] = useState<string | null>(() => initialData?.fileUrl ? "Existing attachment" : null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -69,20 +80,26 @@ export default function AddDocumentModal({ isOpen, onClose, onSuccess }: AddDocu
     setError(null);
 
     try {
-      const res = await fetch("/api/documents", {
-        method: "POST",
+      const isEditing = Boolean(initialData?.id);
+      const url = "/api/documents";
+      const method = isEditing ? "PATCH" : "POST";
+      const payload = {
+        id: initialData?.id,
+        vehicleId: activeVehicle.id,
+        title,
+        type,
+        documentNumber: documentNumber || null,
+        provider: provider || null,
+        issueDate: issueDate ? new Date(issueDate).toISOString() : null,
+        expiryDate: expiryDate ? new Date(expiryDate).toISOString() : null,
+        notes: notes || null,
+        fileUrl: fileUrl || null,
+      };
+
+      const res = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          vehicleId: activeVehicle.id,
-          title,
-          type,
-          documentNumber: documentNumber || null,
-          provider: provider || null,
-          issueDate: issueDate ? new Date(issueDate).toISOString() : null,
-          expiryDate: expiryDate ? new Date(expiryDate).toISOString() : null,
-          notes: notes || null,
-          fileUrl: fileUrl || null,
-        }),
+        body: JSON.stringify(payload),
       });
 
       const data = await res.json();
@@ -109,8 +126,12 @@ export default function AddDocumentModal({ isOpen, onClose, onSuccess }: AddDocu
               <FileText className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-zinc-100">Add Vehicle Document</h2>
-              <p className="text-xs text-zinc-400">Track validity and expiration alerts</p>
+              <h2 className="text-lg font-semibold text-zinc-100">
+                {initialData ? "Edit Vehicle Document" : "Add Vehicle Document"}
+              </h2>
+              <p className="text-xs text-zinc-400">
+                {initialData ? "Update renewal date or details" : "Track validity and expiration alerts"}
+              </p>
             </div>
           </div>
           <button

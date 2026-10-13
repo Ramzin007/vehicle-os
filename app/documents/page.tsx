@@ -12,6 +12,7 @@ import {
   Eye,
   ExternalLink,
   X,
+  Edit2,
 } from "lucide-react";
 
 interface EnrichedDocument {
@@ -37,6 +38,7 @@ export default function DocumentsPage() {
   const [_loading, setLoading] = useState(true);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedDoc, setSelectedDoc] = useState<EnrichedDocument | null>(null);
+  const [editingDoc, setEditingDoc] = useState<EnrichedDocument | null>(null);
 
   const fetchDocs = useCallback(async () => {
     if (!activeVehicle) return;
@@ -202,14 +204,23 @@ export default function DocumentsPage() {
                   )}
                 </div>
 
-                <div className="flex flex-col items-end gap-2">
-                  <button
-                    onClick={() => handleDelete(doc.id)}
-                    className="text-zinc-600 hover:text-red-400 p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                    title="Delete document"
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </button>
+                <div className="flex flex-col items-end gap-1.5 shrink-0">
+                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button
+                      onClick={() => setEditingDoc(doc)}
+                      className="text-zinc-500 hover:text-blue-400 p-1.5 rounded-lg hover:bg-zinc-800 transition"
+                      title="Edit document"
+                    >
+                      <Edit2 className="h-3.5 w-3.5" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(doc.id)}
+                      className="text-zinc-500 hover:text-red-400 p-1.5 rounded-lg hover:bg-zinc-800 transition"
+                      title="Delete document"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -281,6 +292,19 @@ export default function DocumentsPage() {
           isOpen={isAddModalOpen}
           onClose={() => setIsAddModalOpen(false)}
           onSuccess={fetchDocs}
+        />
+      )}
+
+      {/* Edit Document Modal */}
+      {editingDoc && (
+        <AddDocumentModal
+          isOpen={Boolean(editingDoc)}
+          initialData={editingDoc}
+          onClose={() => setEditingDoc(null)}
+          onSuccess={() => {
+            setEditingDoc(null);
+            fetchDocs();
+          }}
         />
       )}
     </div>
