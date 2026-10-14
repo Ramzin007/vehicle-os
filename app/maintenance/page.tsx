@@ -419,10 +419,10 @@ export default function MaintenancePage() {
 
                       <button
                         onClick={() => handleDelete(task.id)}
-                        className="text-zinc-500 hover:text-rose-400 p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="text-zinc-500 hover:text-rose-400 p-1.5 rounded-lg opacity-100 sm:opacity-0 sm:group-hover:opacity-100 hover:bg-rose-500/10 transition"
                         title="Delete task"
                       >
-                        <Trash2 className="h-3.5 w-3.5" />
+                        <Trash2 className="h-4 w-4" />
                       </button>
                     </div>
                   </div>

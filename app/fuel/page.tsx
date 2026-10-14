@@ -261,10 +261,10 @@ export default function FuelPage() {
                       <button
                         onClick={() => handleDelete(log.id)}
                         disabled={deletingId === log.id}
-                        className="opacity-0 group-hover:opacity-100 transition-opacity text-zinc-500 hover:text-rose-400 p-1"
+                        className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition text-zinc-500 hover:text-rose-400 p-1.5 rounded-lg hover:bg-rose-500/10"
                         title="Delete record"
                       >
-                        <Trash2 className="h-3.5 w-3.5" />
+                        <Trash2 className="h-4 w-4" />
                       </button>
                     </div>
                   )}

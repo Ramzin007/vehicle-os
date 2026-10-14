@@ -207,7 +207,7 @@ export default function DocumentsPage() {
                 </div>
 
                 <div className="flex flex-col items-end gap-1.5 shrink-0">
-                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="flex items-center gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                     <button
                       onClick={() => setEditingDoc(doc)}
                       className="text-zinc-500 hover:text-amber-400 p-1.5 rounded-lg hover:bg-zinc-800 transition"

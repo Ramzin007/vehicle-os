@@ -251,7 +251,7 @@ export default function ExpensesPage() {
                       </span>
                       <button
                         onClick={() => handleDelete(exp.id)}
-                        className="text-zinc-500 hover:text-rose-400 p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="text-zinc-500 hover:text-rose-400 p-1.5 rounded-lg opacity-100 sm:opacity-0 sm:group-hover:opacity-100 hover:bg-rose-500/10 transition"
                         title="Delete expense"
                       >
                         <Trash2 className="h-4 w-4" />
