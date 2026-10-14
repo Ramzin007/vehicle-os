@@ -44,8 +44,8 @@ export default function RegisterPage() {
       <div className="w-full max-w-md rounded-3xl border border-zinc-800 bg-zinc-900/90 p-6 sm:p-8 shadow-2xl backdrop-blur-xl">
         {/* Brand Header */}
         <div className="text-center mb-6">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-700 shadow-xl shadow-emerald-950/60 mb-3">
-            <ShieldCheck className="h-6 w-6 text-white" />
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-700 shadow-lg shadow-emerald-500/20 mb-3">
+            <ShieldCheck className="h-7 w-7 text-zinc-950" />
           </div>
           <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-zinc-100">
             Create Your Account
@@ -56,12 +56,12 @@ export default function RegisterPage() {
         </div>
 
         {error && (
-          <div className="mb-4 rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-xs text-red-400">
+          <div className="mb-4 rounded-2xl border border-rose-500/30 bg-rose-500/10 p-3 text-xs text-rose-400">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleRegister} className="flex flex-col gap-3.5">
+        <form onSubmit={handleRegister} className="flex flex-col gap-4">
           <div>
             <label className="text-xs font-semibold text-zinc-400">Full Name</label>
             <div className="relative mt-1.5">
@@ -72,7 +72,7 @@ export default function RegisterPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
-                className="w-full rounded-xl border border-zinc-800 bg-zinc-950 pl-10 pr-4 py-2.5 text-sm text-zinc-100 placeholder-zinc-600 focus:border-emerald-500 focus:outline-none"
+                className="w-full rounded-2xl border border-zinc-800 bg-zinc-950 pl-10 pr-4 py-2.5 text-sm text-zinc-100 placeholder-zinc-600 focus:border-emerald-500 focus:outline-none"
               />
             </div>
           </div>
@@ -87,7 +87,7 @@ export default function RegisterPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full rounded-xl border border-zinc-800 bg-zinc-950 pl-10 pr-4 py-2.5 text-sm text-zinc-100 placeholder-zinc-600 focus:border-emerald-500 focus:outline-none"
+                className="w-full rounded-2xl border border-zinc-800 bg-zinc-950 pl-10 pr-4 py-2.5 text-sm text-zinc-100 placeholder-zinc-600 focus:border-emerald-500 focus:outline-none"
               />
             </div>
           </div>
@@ -103,7 +103,7 @@ export default function RegisterPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={6}
-                className="w-full rounded-xl border border-zinc-800 bg-zinc-950 pl-10 pr-4 py-2.5 text-sm text-zinc-100 placeholder-zinc-600 focus:border-emerald-500 focus:outline-none"
+                className="w-full rounded-2xl border border-zinc-800 bg-zinc-950 pl-10 pr-4 py-2.5 text-sm text-zinc-100 placeholder-zinc-600 focus:border-emerald-500 focus:outline-none"
               />
             </div>
           </div>
@@ -111,13 +111,13 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={loading}
-            className="mt-2 w-full flex items-center justify-center gap-2 rounded-xl bg-emerald-500 py-3 text-xs font-bold text-zinc-950 transition hover:bg-emerald-400 disabled:opacity-50 shadow-lg shadow-emerald-500/20"
+            className="mt-2 w-full flex items-center justify-center gap-2 rounded-2xl bg-emerald-500 py-3 text-xs font-semibold text-zinc-950 transition hover:bg-emerald-400 disabled:opacity-50 shadow-lg shadow-emerald-500/20"
           >
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Create Account"}
           </button>
         </form>
 
-        <p className="mt-5 text-center text-xs text-zinc-400">
+        <p className="mt-6 text-center text-xs text-zinc-500">
           Already have an account?{" "}
           <Link href="/login" className="font-semibold text-emerald-400 hover:text-emerald-300">
             Sign in

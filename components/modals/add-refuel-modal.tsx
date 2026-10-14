@@ -129,20 +129,20 @@ export default function AddRefuelModal({ isOpen, onClose, onSuccess }: AddRefuel
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
       <div className="w-full max-w-lg rounded-t-3xl sm:rounded-3xl border border-zinc-800 bg-zinc-900 p-6 shadow-2xl max-h-[92vh] overflow-y-auto">
         <div className="flex items-center justify-between pb-4 border-b border-zinc-800">
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/15 text-emerald-400">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-emerald-500/20 bg-emerald-500/10 text-emerald-400">
               <Fuel className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-zinc-100">Record Fuel Refill</h2>
-              <p className="text-xs text-zinc-400">
+              <h2 className="text-lg font-bold text-zinc-100">Record Fuel Refill</h2>
+              <p className="text-xs text-zinc-400 font-mono">
                 {activeVehicle ? `${activeVehicle.name} • ${activeVehicle.model}` : "Vehicle refill"}
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-800 text-zinc-400 hover:text-zinc-200"
+            className="flex h-8 w-8 items-center justify-center rounded-xl bg-zinc-800 text-zinc-400 hover:text-zinc-200"
           >
             <X className="h-4 w-4" />
           </button>
@@ -311,20 +311,20 @@ export default function AddRefuelModal({ isOpen, onClose, onSuccess }: AddRefuel
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 rounded-xl border border-zinc-800 bg-zinc-950 py-2.5 text-xs font-medium text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200"
+              className="flex-1 rounded-xl border border-zinc-800 bg-zinc-950 py-3 text-xs font-semibold text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200 transition"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-emerald-500 py-2.5 text-xs font-semibold text-zinc-950 hover:bg-emerald-400 disabled:opacity-50"
+              className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-emerald-500 py-3 text-xs font-semibold text-zinc-950 hover:bg-emerald-400 disabled:opacity-50 transition shadow-lg shadow-emerald-500/20"
             >
               {loading ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
                 <>
-                  <Sparkles className="h-3.5 w-3.5" />
+                  <Sparkles className="h-4 w-4" />
                   Save Refill
                 </>
               )}

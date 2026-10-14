@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Bike, Car, Gauge, Fuel, Edit3, Check, X } from "lucide-react";
+import { Bike, Car, Gauge, Fuel, Edit3, Check, X, Plus } from "lucide-react";
 import { useVehicle } from "@/components/context/vehicle-context";
+import AddVehicleModal from "@/components/modals/add-vehicle-modal";
 
 interface VehicleCardProps {
   careScore?: number;
@@ -17,17 +18,48 @@ export default function VehicleCard({
   careColor = "#10b981",
   estimatedRange = 420,
 }: VehicleCardProps) {
-  const { activeVehicle, refreshVehicles } = useVehicle();
+  const { activeVehicle, refreshVehicles, isLoading } = useVehicle();
   const [isEditingOdo, setIsEditingOdo] = useState(false);
   const [odoValue, setOdoValue] = useState("");
   const [savingOdo, setSavingOdo] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
-  if (!activeVehicle) {
+  if (isLoading) {
     return (
-      <section className="animate-pulse rounded-3xl border border-zinc-800 bg-zinc-900 p-5">
+      <section className="animate-pulse rounded-3xl border border-zinc-800 bg-zinc-900 p-6">
         <div className="h-6 w-32 rounded bg-zinc-800" />
         <div className="mt-2 h-4 w-48 rounded bg-zinc-800/60" />
       </section>
+    );
+  }
+
+  if (!activeVehicle) {
+    return (
+      <>
+        <section className="rounded-3xl border border-dashed border-zinc-800 bg-zinc-900/40 p-8 text-center">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-400 mb-3">
+            <Bike className="h-6 w-6" />
+          </div>
+          <h2 className="text-base font-bold text-zinc-100">Welcome to VehicleOS</h2>
+          <p className="text-xs text-zinc-400 mt-1 max-w-sm mx-auto">
+            Your garage is currently empty. Add your motorcycle or car to start tracking fuel telemetry, service intervals, and documents.
+          </p>
+          <button
+            onClick={() => setIsAddModalOpen(true)}
+            className="mt-4 inline-flex items-center gap-2 rounded-2xl bg-emerald-500 px-5 py-2.5 text-xs font-semibold text-zinc-950 transition hover:bg-emerald-400 shadow-lg shadow-emerald-500/20"
+          >
+            <Plus className="h-4 w-4" />
+            <span>Add Your First Vehicle</span>
+          </button>
+        </section>
+
+        {isAddModalOpen && (
+          <AddVehicleModal
+            isOpen={isAddModalOpen}
+            onClose={() => setIsAddModalOpen(false)}
+          />
+        )}
+      </>
     );
   }
 

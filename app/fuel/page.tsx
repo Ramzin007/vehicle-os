@@ -66,20 +66,20 @@ export default function FuelPage() {
       {/* Header & Add Refill CTA */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-zinc-100 flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-500/15 text-emerald-400">
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-zinc-100 flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-emerald-500/20 bg-emerald-500/10 text-emerald-400">
               <Fuel className="h-5 w-5" />
             </div>
             Fuel & Refills
           </h1>
-          <p className="text-xs text-zinc-400 mt-0.5">
+          <p className="text-xs text-zinc-400 mt-1">
             {activeVehicle ? `${activeVehicle.name} • ${activeVehicle.model}` : "Fuel economy & refills"}
           </p>
         </div>
 
         <button
           onClick={() => setIsAddModalOpen(true)}
-          className="flex items-center gap-1.5 rounded-xl bg-emerald-500 px-3.5 py-2.5 text-xs font-bold text-zinc-950 transition hover:bg-emerald-400 shadow-lg shadow-emerald-500/20"
+          className="flex items-center gap-2 rounded-xl bg-emerald-500 px-4 py-2 text-xs font-semibold text-zinc-950 transition hover:bg-emerald-400 shadow-lg shadow-emerald-500/20"
         >
           <Plus className="h-4 w-4" />
           <span>Add Refill</span>
@@ -91,32 +91,32 @@ export default function FuelPage() {
         {/* Left Column: Metrics & Analysis (lg: 5 cols) */}
         <div className="flex flex-col gap-6 lg:col-span-5">
           {/* Fuel Metrics Hero Banner */}
-          <div className="relative overflow-hidden rounded-3xl border border-zinc-800 bg-gradient-to-br from-zinc-900 via-zinc-900 to-zinc-950 p-6 shadow-xl">
+          <div className="relative overflow-hidden rounded-3xl border border-zinc-800 bg-gradient-to-br from-zinc-900 via-zinc-900 to-zinc-950 p-6">
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
                   Average Fuel Economy
                 </p>
-                <div className="mt-2 flex items-baseline gap-2">
-                  <span className="text-4xl sm:text-5xl font-extrabold tracking-tight text-emerald-400">
+                <div className="mt-2 flex items-baseline gap-2 font-mono">
+                  <span className="text-5xl font-extrabold tracking-tight text-zinc-100 tabular-nums">
                     {metrics.averageEconomy > 0 ? metrics.averageEconomy : "--"}
                   </span>
-                  <span className="text-base font-semibold text-zinc-400">km/L</span>
+                  <span className="text-sm font-semibold text-zinc-500">km/L</span>
                 </div>
                 {metrics.averageEconomy > 0 && (
-                  <p className="text-xs text-zinc-500 mt-1">
+                  <p className="text-xs text-zinc-400 mt-1 font-mono">
                     {(100 / metrics.averageEconomy).toFixed(2)} L/100km • ~{Math.round(metrics.averageEconomy * 2.352)} MPG (US)
                   </p>
                 )}
               </div>
 
               <div className="flex flex-col items-end gap-1.5">
-                <div className="flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-300">
+                <div className="flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-400 font-mono">
                   <Award className="h-4 w-4 text-emerald-400" />
                   <span>Best: {metrics.bestEconomy > 0 ? `${metrics.bestEconomy} km/L` : "--"}</span>
                 </div>
                 {metrics.worstEconomy > 0 && (
-                  <span className="text-[11px] text-zinc-500">
+                  <span className="text-xs text-zinc-500 font-mono">
                     Low: {metrics.worstEconomy} km/L
                   </span>
                 )}
@@ -124,22 +124,22 @@ export default function FuelPage() {
             </div>
 
             {/* 3 Metric Pills */}
-            <div className="mt-6 grid grid-cols-3 gap-2.5 border-t border-zinc-800/80 pt-4 text-center">
-              <div className="rounded-2xl bg-zinc-950/60 p-3 border border-zinc-800/60">
-                <p className="text-[10px] uppercase font-semibold text-zinc-500">Cost / km</p>
-                <p className="mt-1 text-base font-bold text-zinc-100">
+            <div className="mt-6 grid grid-cols-3 gap-3 border-t border-zinc-800/80 pt-4 text-center">
+              <div className="rounded-2xl bg-zinc-950/60 p-3 border border-zinc-800/80">
+                <p className="text-[10px] uppercase font-semibold text-zinc-500 tracking-wider">Cost / km</p>
+                <p className="mt-1 text-base font-bold text-zinc-100 font-mono tabular-nums">
                   {metrics.costPerKm > 0 ? `₹${metrics.costPerKm}` : "--"}
                 </p>
               </div>
-              <div className="rounded-2xl bg-zinc-950/60 p-3 border border-zinc-800/60">
-                <p className="text-[10px] uppercase font-semibold text-zinc-500">Total Fuel</p>
-                <p className="mt-1 text-base font-bold text-zinc-100">
+              <div className="rounded-2xl bg-zinc-950/60 p-3 border border-zinc-800/80">
+                <p className="text-[10px] uppercase font-semibold text-zinc-500 tracking-wider">Total Fuel</p>
+                <p className="mt-1 text-base font-bold text-zinc-100 font-mono tabular-nums">
                   {metrics.totalLiters > 0 ? `${metrics.totalLiters} L` : "--"}
                 </p>
               </div>
-              <div className="rounded-2xl bg-zinc-950/60 p-3 border border-zinc-800/60">
-                <p className="text-[10px] uppercase font-semibold text-zinc-500">Total Spend</p>
-                <p className="mt-1 text-base font-bold text-zinc-100">
+              <div className="rounded-2xl bg-zinc-950/60 p-3 border border-zinc-800/80">
+                <p className="text-[10px] uppercase font-semibold text-zinc-500 tracking-wider">Total Spend</p>
+                <p className="mt-1 text-base font-bold text-zinc-100 font-mono tabular-nums">
                   ₹{metrics.totalCost.toLocaleString()}
                 </p>
               </div>
@@ -151,7 +151,7 @@ export default function FuelPage() {
 
           {/* Efficiency Tips & Insights */}
           <div className="rounded-3xl border border-zinc-800 bg-zinc-900/60 p-5 text-xs text-zinc-400">
-            <div className="flex items-center gap-2 mb-2 text-zinc-200 font-bold">
+            <div className="flex items-center gap-2 mb-2 text-zinc-200 font-semibold">
               <Sparkles className="h-4 w-4 text-emerald-400" />
               <span>Fuel Insights</span>
             </div>
@@ -164,10 +164,10 @@ export default function FuelPage() {
         {/* Right Column: Refuel History Feed (lg: 7 cols) */}
         <div className="flex flex-col gap-3 lg:col-span-7">
           <div className="flex items-center justify-between mb-1">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-zinc-400">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
               Refuel History ({logs.length})
             </h2>
-            <span className="text-[11px] text-zinc-500">Chronological • Newest First</span>
+            <span className="text-[11px] text-zinc-500 font-mono">Chronological</span>
           </div>
 
           {logs.length === 0 ? (
@@ -189,25 +189,25 @@ export default function FuelPage() {
               {logs.map((log) => (
                 <div
                   key={log.id}
-                  className="group relative rounded-2xl border border-zinc-800 bg-zinc-900/90 p-4 transition hover:border-zinc-700 shadow-md"
+                  className="group relative rounded-2xl border border-zinc-800/80 bg-zinc-900/60 p-4 transition hover:border-zinc-750"
                 >
                   <div className="flex items-start justify-between">
                     <div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-base font-bold text-zinc-100">
+                      <div className="flex items-center gap-2 font-mono">
+                        <span className="text-base font-bold text-zinc-100 tabular-nums">
                           {log.odometer.toLocaleString()} km
                         </span>
 
                         {log.calculatedEconomy ? (
-                          <span className="rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-0.5 text-xs font-bold text-emerald-400">
+                          <span className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 text-xs font-semibold text-emerald-400 tabular-nums">
                             {log.calculatedEconomy} km/L
                           </span>
                         ) : log.isFullTank ? (
-                          <span className="rounded-full bg-zinc-800 px-2 py-0.5 text-[10px] text-zinc-400">
+                          <span className="rounded-full bg-zinc-800 border border-zinc-700/50 px-2 py-0.5 text-[10px] text-zinc-400">
                             Baseline Fill
                           </span>
                         ) : (
-                          <span className="rounded-full bg-amber-500/10 px-2 py-0.5 text-[10px] text-amber-400">
+                          <span className="rounded-full bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 text-[10px] text-amber-400">
                             Partial
                           </span>
                         )}
@@ -224,18 +224,18 @@ export default function FuelPage() {
                         </span>
 
                         {log.calculatedDistance && (
-                          <span className="flex items-center gap-1 text-emerald-400 font-semibold">
+                          <span className="flex items-center gap-1 text-emerald-400 font-mono font-medium">
                             +{log.calculatedDistance} km covered
                           </span>
                         )}
                       </div>
                     </div>
 
-                    <div className="text-right">
-                      <p className="text-base font-bold text-zinc-100">
+                    <div className="text-right font-mono">
+                      <p className="text-base font-bold text-zinc-100 tabular-nums">
                         ₹{log.totalCost.toFixed(0)}
                       </p>
-                      <p className="text-xs text-zinc-500 mt-0.5">
+                      <p className="text-xs text-zinc-500 mt-0.5 tabular-nums">
                         {log.liters} L @ ₹{log.pricePerLiter.toFixed(2)}/L
                       </p>
                     </div>
@@ -261,7 +261,7 @@ export default function FuelPage() {
                       <button
                         onClick={() => handleDelete(log.id)}
                         disabled={deletingId === log.id}
-                        className="opacity-0 group-hover:opacity-100 transition-opacity text-zinc-500 hover:text-red-400 p-1"
+                        className="opacity-0 group-hover:opacity-100 transition-opacity text-zinc-500 hover:text-rose-400 p-1"
                         title="Delete record"
                       >
                         <Trash2 className="h-3.5 w-3.5" />

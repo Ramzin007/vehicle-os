@@ -132,22 +132,24 @@ export default function MaintenancePage() {
   });
 
   return (
-    <div className="flex flex-col gap-5 p-4 sm:p-5">
+    <div className="flex flex-col gap-6 p-4 sm:p-6 lg:p-8">
       {/* Header & Schedule CTA */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold tracking-tight text-zinc-100 flex items-center gap-2">
-            <Wrench className="h-5 w-5 text-cyan-400" />
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-zinc-100 flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-cyan-500/20 bg-cyan-500/10 text-cyan-400">
+              <Wrench className="h-5 w-5" />
+            </div>
             Service & Care
           </h1>
-          <p className="text-xs text-zinc-400 mt-0.5">
+          <p className="text-xs text-zinc-400 mt-1">
             {activeVehicle ? `${activeVehicle.name} • ${activeVehicle.model}` : "Maintenance tracker"}
           </p>
         </div>
 
         <button
           onClick={() => setIsAddModalOpen(true)}
-          className="flex items-center gap-1.5 rounded-xl bg-cyan-500 px-3.5 py-2.5 text-xs font-bold text-zinc-950 transition hover:bg-cyan-400 shadow-lg shadow-cyan-500/20"
+          className="flex items-center gap-2 rounded-xl bg-cyan-500 px-4 py-2 text-xs font-semibold text-zinc-950 transition hover:bg-cyan-400 shadow-lg shadow-cyan-500/20"
         >
           <Plus className="h-4 w-4" />
           <span>Schedule Service</span>
@@ -156,42 +158,42 @@ export default function MaintenancePage() {
 
       {/* Maintenance Health Summary Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/80 p-3.5">
-          <p className="text-[10px] uppercase font-semibold text-zinc-500">Upcoming Services</p>
-          <div className="mt-1 flex items-baseline gap-1.5">
-            <span className="text-2xl font-bold text-cyan-400">{pendingCount}</span>
-            <span className="text-xs text-zinc-400">tasks</span>
+        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-4">
+          <p className="text-[11px] uppercase font-semibold text-zinc-400 tracking-wider">Upcoming Services</p>
+          <div className="mt-1 flex items-baseline gap-1.5 font-mono">
+            <span className="text-3xl font-bold text-cyan-400 tabular-nums">{pendingCount}</span>
+            <span className="text-xs text-zinc-500">tasks</span>
           </div>
         </div>
 
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/80 p-3.5">
-          <p className="text-[10px] uppercase font-semibold text-zinc-500">Service History</p>
-          <div className="mt-1 flex items-baseline gap-1.5">
-            <span className="text-2xl font-bold text-emerald-400">{completedCount}</span>
-            <span className="text-xs text-zinc-400">completed</span>
+        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-4">
+          <p className="text-[11px] uppercase font-semibold text-zinc-400 tracking-wider">Service History</p>
+          <div className="mt-1 flex items-baseline gap-1.5 font-mono">
+            <span className="text-3xl font-bold text-emerald-400 tabular-nums">{completedCount}</span>
+            <span className="text-xs text-zinc-500">completed</span>
           </div>
         </div>
 
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/80 p-3.5">
-          <p className="text-[10px] uppercase font-semibold text-zinc-500">Total Spent on Care</p>
-          <div className="mt-1 flex items-baseline gap-1.5">
-            <span className="text-2xl font-bold text-amber-300">
+        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-4">
+          <p className="text-[11px] uppercase font-semibold text-zinc-400 tracking-wider">Total Spent on Care</p>
+          <div className="mt-1 flex items-baseline gap-1.5 font-mono">
+            <span className="text-3xl font-bold text-zinc-100 tabular-nums">
               ₹{serviceExpenseTotal.toLocaleString()}
             </span>
           </div>
         </div>
 
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/80 p-3.5">
-          <p className="text-[10px] uppercase font-semibold text-zinc-500">Current Odometer</p>
-          <div className="mt-1 flex items-baseline gap-1.5">
-            <span className="text-2xl font-bold text-zinc-100">{currentOdometer.toLocaleString()}</span>
-            <span className="text-xs text-zinc-400">km</span>
+        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-4">
+          <p className="text-[11px] uppercase font-semibold text-zinc-400 tracking-wider">Current Odometer</p>
+          <div className="mt-1 flex items-baseline gap-1.5 font-mono">
+            <span className="text-3xl font-bold text-zinc-100 tabular-nums">{currentOdometer.toLocaleString()}</span>
+            <span className="text-xs text-zinc-500">km</span>
           </div>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="grid grid-cols-3 gap-2 rounded-2xl border border-zinc-800 bg-zinc-900/90 p-1.5">
+      <div className="grid grid-cols-3 gap-2 rounded-2xl border border-zinc-800 bg-zinc-900/80 p-1.5">
         <button
           onClick={() => setActiveTab("ACTIVE")}
           className={`rounded-xl py-2 text-xs font-semibold transition ${
@@ -227,14 +229,14 @@ export default function MaintenancePage() {
       {/* Tasks List */}
       <section className="flex flex-col gap-3">
         {filteredTasks.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-zinc-800 p-8 text-center">
-            <CheckCircle2 className="mx-auto h-8 w-8 text-emerald-500/50 mb-2" />
-            <p className="text-sm font-semibold text-zinc-300">
+          <div className="rounded-3xl border border-dashed border-zinc-800 p-8 text-center bg-zinc-900/40">
+            <CheckCircle2 className="mx-auto h-8 w-8 text-emerald-400 mb-2" />
+            <p className="text-sm font-semibold text-zinc-200">
               {activeTab === "ACTIVE"
                 ? "No pending service tasks!"
                 : "No tasks found in this view"}
             </p>
-            <p className="text-xs text-zinc-500 mt-1 max-w-xs mx-auto">
+            <p className="text-xs text-zinc-400 mt-1 max-w-xs mx-auto">
               Schedule oil changes, chain lubes, or brake inspections to keep your TVS Ronin running smoothly.
             </p>
             <button
@@ -281,41 +283,41 @@ export default function MaintenancePage() {
                 key={task.id}
                 className={`group rounded-2xl border p-4 transition ${
                   isOverdue
-                    ? "border-red-500/40 bg-red-500/5"
+                    ? "border-rose-500/30 bg-rose-500/5"
                     : isDueSoon
-                    ? "border-amber-500/40 bg-amber-500/5"
+                    ? "border-amber-500/30 bg-amber-500/5"
                     : isCompleted
-                    ? "border-zinc-800/60 bg-zinc-900/50 opacity-80"
-                    : "border-zinc-800 bg-zinc-900/90"
+                    ? "border-zinc-800/60 bg-zinc-900/40 opacity-75"
+                    : "border-zinc-800 bg-zinc-900/70 hover:border-zinc-700"
                 }`}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-base font-bold text-zinc-100">
+                      <span className="text-sm font-bold text-zinc-100">
                         {task.title}
                       </span>
 
                       {/* Status / Urgency pill */}
                       {isCompleted ? (
-                        <span className="rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 text-[10px] font-semibold text-emerald-400">
+                        <span className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 text-[10px] font-semibold text-emerald-400">
                           Completed
                         </span>
                       ) : isOverdue ? (
-                        <span className="rounded-full bg-red-500/20 border border-red-500/40 px-2 py-0.5 text-[10px] font-bold text-red-400 animate-pulse">
+                        <span className="rounded-full bg-rose-500/10 border border-rose-500/30 px-2 py-0.5 text-[10px] font-bold text-rose-400">
                           Overdue
                         </span>
                       ) : isDueSoon ? (
-                        <span className="rounded-full bg-amber-500/20 border border-amber-500/40 px-2 py-0.5 text-[10px] font-bold text-amber-400">
+                        <span className="rounded-full bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 text-[10px] font-bold text-amber-400">
                           Due Soon
                         </span>
                       ) : (
-                        <span className="rounded-full bg-zinc-800 px-2 py-0.5 text-[10px] text-zinc-400">
+                        <span className="rounded-full bg-zinc-800 border border-zinc-700 px-2 py-0.5 text-[10px] text-zinc-400 font-mono">
                           Scheduled
                         </span>
                       )}
 
-                      <span className="rounded-full bg-zinc-800/70 px-2 py-0.5 text-[10px] uppercase font-semibold text-zinc-400">
+                      <span className="rounded-full bg-zinc-800/70 border border-zinc-700/50 px-2 py-0.5 text-[10px] uppercase font-semibold text-zinc-400 font-mono">
                         {task.category}
                       </span>
                     </div>
@@ -324,9 +326,9 @@ export default function MaintenancePage() {
                     <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs">
                       {task.dueOdometer && !isCompleted && (
                         <span
-                          className={`flex items-center gap-1 font-medium ${
+                          className={`flex items-center gap-1 font-mono font-medium ${
                             isOverdue
-                              ? "text-red-400 font-bold"
+                              ? "text-rose-400 font-bold"
                               : isDueSoon
                               ? "text-amber-400 font-bold"
                               : "text-zinc-400"
@@ -343,7 +345,7 @@ export default function MaintenancePage() {
                         <span
                           className={`flex items-center gap-1 ${
                             daysRemaining !== null && daysRemaining < 0
-                              ? "text-red-400"
+                              ? "text-rose-400"
                               : "text-zinc-400"
                           }`}
                         >
@@ -353,7 +355,7 @@ export default function MaintenancePage() {
                             day: "numeric",
                           })}{" "}
                           {daysRemaining !== null && (
-                            <span className="text-zinc-500">
+                            <span className="text-zinc-500 font-mono">
                               ({daysRemaining < 0 ? `${Math.abs(daysRemaining)}d late` : `in ${daysRemaining}d`})
                             </span>
                           )}
@@ -369,9 +371,9 @@ export default function MaintenancePage() {
                       )}
 
                       {task.intervalKm && (
-                        <span className="flex items-center gap-1 text-[11px] text-zinc-500">
+                        <span className="flex items-center gap-1 text-[11px] text-zinc-500 font-mono">
                           <RotateCw className="h-3 w-3" />
-                          Repeats every {task.intervalKm.toLocaleString()} km
+                          Every {task.intervalKm.toLocaleString()} km
                         </span>
                       )}
                     </div>
@@ -392,7 +394,7 @@ export default function MaintenancePage() {
                   {/* Actions */}
                   <div className="flex flex-col items-end gap-2">
                     {task.cost && task.cost > 0 ? (
-                      <span className="flex items-center gap-1 text-xs font-semibold text-zinc-300">
+                      <span className="flex items-center gap-1 text-xs font-semibold text-zinc-300 font-mono">
                         <Coins className="h-3 w-3 text-amber-400" />
                         ₹{task.cost.toLocaleString()}
                       </span>
@@ -406,7 +408,7 @@ export default function MaintenancePage() {
                             setCompletionOdo(String(currentOdometer));
                             setCompletionCost(task.cost ? String(task.cost) : "");
                           }}
-                          className="flex items-center gap-1 rounded-xl bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-1 text-xs font-semibold text-emerald-400 hover:bg-emerald-500/25"
+                          className="flex items-center gap-1 rounded-xl bg-emerald-500/10 border border-emerald-500/30 px-3 py-1.5 text-xs font-semibold text-emerald-400 hover:bg-emerald-500/20 transition"
                         >
                           <Check className="h-3.5 w-3.5" />
                           Done
@@ -415,7 +417,7 @@ export default function MaintenancePage() {
 
                       <button
                         onClick={() => handleDelete(task.id)}
-                        className="text-zinc-500 hover:text-red-400 p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="text-zinc-500 hover:text-rose-400 p-1 opacity-0 group-hover:opacity-100 transition-opacity"
                         title="Delete task"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
@@ -426,41 +428,41 @@ export default function MaintenancePage() {
 
                 {/* Inline Complete Drawer */}
                 {completingTaskId === task.id && (
-                  <div className="mt-3 rounded-xl border border-emerald-500/30 bg-zinc-950 p-3 flex flex-col gap-2">
+                  <div className="mt-3 rounded-xl border border-emerald-500/30 bg-zinc-950 p-3.5 flex flex-col gap-2.5">
                     <p className="text-xs font-semibold text-emerald-400">
                       Record Completion Details
                     </p>
                     <div className="grid grid-cols-2 gap-2">
                       <div>
-                        <label className="text-[10px] text-zinc-400">Odometer (km)</label>
+                        <label className="text-[10px] text-zinc-400 font-mono">Odometer (km)</label>
                         <input
                           type="number"
                           value={completionOdo}
                           onChange={(e) => setCompletionOdo(e.target.value)}
-                          className="mt-0.5 w-full rounded-lg border border-zinc-800 bg-zinc-900 px-2 py-1 text-xs text-zinc-100 focus:outline-none"
+                          className="mt-1 w-full rounded-lg border border-zinc-800 bg-zinc-900 px-2.5 py-1.5 text-xs text-zinc-100 focus:outline-none focus:border-zinc-700 font-mono"
                         />
                       </div>
                       <div>
-                        <label className="text-[10px] text-zinc-400">Actual Cost (₹)</label>
+                        <label className="text-[10px] text-zinc-400 font-mono">Actual Cost (₹)</label>
                         <input
                           type="number"
                           placeholder="e.g. 850"
                           value={completionCost}
                           onChange={(e) => setCompletionCost(e.target.value)}
-                          className="mt-0.5 w-full rounded-lg border border-zinc-800 bg-zinc-900 px-2 py-1 text-xs text-zinc-100 focus:outline-none"
+                          className="mt-1 w-full rounded-lg border border-zinc-800 bg-zinc-900 px-2.5 py-1.5 text-xs text-zinc-100 focus:outline-none focus:border-zinc-700 font-mono"
                         />
                       </div>
                     </div>
                     <div className="flex justify-end gap-2 mt-1">
                       <button
                         onClick={() => setCompletingTaskId(null)}
-                        className="rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-400 hover:text-zinc-200"
+                        className="rounded-lg border border-zinc-800 px-3 py-1 text-xs text-zinc-400 hover:text-zinc-200"
                       >
                         Cancel
                       </button>
                       <button
                         onClick={() => handleMarkComplete(task.id)}
-                        className="rounded-lg bg-emerald-500 px-3 py-1 text-xs font-semibold text-zinc-950 hover:bg-emerald-400"
+                        className="rounded-lg bg-emerald-500 px-3.5 py-1 text-xs font-semibold text-zinc-950 hover:bg-emerald-400"
                       >
                         Confirm Complete
                       </button>

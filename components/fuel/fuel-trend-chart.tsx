@@ -74,25 +74,25 @@ export default function FuelTrendChart({ logs, averageEconomy }: FuelTrendChartP
       : "";
 
   return (
-    <div className="rounded-3xl border border-zinc-800 bg-zinc-900/80 p-5 shadow-lg">
+    <div className="rounded-3xl border border-zinc-800 bg-zinc-900/80 p-5 shadow-sm">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-400">
+          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
             <TrendingUp className="h-4 w-4" />
           </div>
           <div>
-            <h3 className="text-xs font-bold text-zinc-200">Fuel Economy Trend</h3>
-            <p className="text-[10px] text-zinc-500">Mileage curve across full refuels (km/L)</p>
+            <h3 className="text-sm font-semibold text-zinc-100">Fuel Economy Curve</h3>
+            <p className="text-xs text-zinc-500">Mileage telemetry across full refuels (km/L)</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-3 text-[11px]">
+        <div className="flex items-center gap-3 text-xs font-mono">
           <span className="flex items-center gap-1.5 text-emerald-400 font-semibold">
             <span className="h-2 w-2 rounded-full bg-emerald-400" />
             Actual
           </span>
           <span className="flex items-center gap-1.5 text-zinc-400">
-            <span className="h-0.5 w-3 bg-zinc-500 border-dashed" />
+            <span className="h-0.5 w-3 bg-zinc-600 border-dashed" />
             Avg ({averageEconomy})
           </span>
         </div>

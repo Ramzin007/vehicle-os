@@ -1,21 +1,14 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getSessionUser } from "@/lib/auth";
-import { ensureDefaultUserAndVehicle } from "@/lib/seed";
 import { vehicleSchema } from "@/lib/validations";
 
 export async function GET() {
   try {
-    let user = await getSessionUser();
+    const user = await getSessionUser();
 
-    // If no user exists anywhere, auto-seed default demo account
     if (!user) {
-      const userCount = await prisma.user.count();
-      if (userCount === 0) {
-        user = await ensureDefaultUserAndVehicle();
-      } else {
-        return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
-      }
+      return NextResponse.json({ success: true, vehicles: [] });
     }
 
     const vehicles = await prisma.vehicle.findMany({

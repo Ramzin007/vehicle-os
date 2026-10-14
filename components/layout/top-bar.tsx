@@ -74,12 +74,12 @@ export default function TopBar({ title }: TopBarProps) {
 
   return (
     <>
-      <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-zinc-800/80 bg-zinc-950/90 px-4 md:px-8 backdrop-blur-md">
+      <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-zinc-800 bg-zinc-950/80 px-4 md:px-8 backdrop-blur-md">
         {/* Mobile View: Brand & Title */}
-        <div className="flex md:hidden items-center gap-2.5">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-700 shadow-md shadow-emerald-950/40">
-              <ShieldCheck className="h-5 w-5 text-white" />
+        <div className="flex md:hidden items-center gap-3">
+          <Link href="/" className="flex items-center gap-2.5">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 shadow-lg shadow-emerald-500/20">
+              <ShieldCheck className="h-5 w-5 text-zinc-950" />
             </div>
             <div>
               <div className="flex items-center gap-1.5">
@@ -96,35 +96,35 @@ export default function TopBar({ title }: TopBarProps) {
         </div>
 
         {/* Desktop View: Page Title & Breadcrumb */}
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden md:flex items-center gap-4">
           <div>
             <h1 className="text-lg font-bold tracking-tight text-zinc-100">
               {currentTitle}
             </h1>
             {activeVehicle && (
               <p className="text-xs text-zinc-400">
-                Active: <span className="text-zinc-200 font-medium">{activeVehicle.name}</span> ({activeVehicle.model})
+                Active: <span className="text-zinc-200 font-medium">{activeVehicle.name}</span> <span className="text-zinc-500 font-mono">({activeVehicle.model})</span>
               </p>
             )}
           </div>
         </div>
 
         {/* Right Side: Responsive Controls */}
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-3">
           {/* Desktop Quick Action Buttons */}
           <div className="hidden md:flex items-center gap-2">
             <button
               onClick={() => setIsFuelModalOpen(true)}
-              className="flex items-center gap-1.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 px-3 py-1.5 text-xs font-semibold text-emerald-300 hover:bg-emerald-500/25 transition"
+              className="flex items-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3.5 py-2 text-xs font-medium text-emerald-300 hover:bg-emerald-500/20 transition"
             >
-              <Fuel className="h-3.5 w-3.5 text-emerald-400" />
+              <Fuel className="h-3.5 w-3.5" />
               <span>Record Refill</span>
             </button>
             <button
               onClick={() => setIsServiceModalOpen(true)}
-              className="flex items-center gap-1.5 rounded-xl bg-cyan-500/15 border border-cyan-500/30 px-3 py-1.5 text-xs font-semibold text-cyan-300 hover:bg-cyan-500/25 transition"
+              className="flex items-center gap-2 rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-3.5 py-2 text-xs font-medium text-cyan-300 hover:bg-cyan-500/20 transition"
             >
-              <Wrench className="h-3.5 w-3.5 text-cyan-400" />
+              <Wrench className="h-3.5 w-3.5" />
               <span>Log Service</span>
             </button>
           </div>
@@ -135,7 +135,7 @@ export default function TopBar({ title }: TopBarProps) {
               <button
                 type="button"
                 onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="flex items-center gap-2 rounded-xl border border-zinc-800 bg-zinc-900/90 px-3 py-1.5 text-xs font-medium text-zinc-200 transition hover:border-zinc-700 hover:bg-zinc-800"
+                className="flex items-center gap-2 rounded-xl border border-zinc-800 bg-zinc-900/90 px-3 py-1.5 text-xs font-medium text-zinc-200 transition hover:border-zinc-700 hover:bg-zinc-850"
               >
                 {activeVehicle.type === "MOTORCYCLE" ? (
                   <Bike className="h-3.5 w-3.5 text-emerald-400" />
@@ -153,11 +153,11 @@ export default function TopBar({ title }: TopBarProps) {
                     className="fixed inset-0 z-40"
                     onClick={() => setDropdownOpen(false)}
                   />
-                  <div className="absolute right-0 top-full z-50 mt-2 w-56 rounded-2xl border border-zinc-800 bg-zinc-900/98 p-1.5 shadow-2xl backdrop-blur-xl">
-                    <p className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-zinc-500">
+                  <div className="absolute right-0 top-full z-50 mt-2 w-60 rounded-2xl border border-zinc-800 bg-zinc-900/95 p-2 shadow-2xl backdrop-blur-xl">
+                    <p className="px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-zinc-500">
                       Select Vehicle
                     </p>
-                    <div className="flex flex-col gap-0.5">
+                    <div className="flex flex-col gap-1">
                       {vehicles.map((v) => {
                         const isSelected = v.id === activeVehicle.id;
                         return (
@@ -170,11 +170,11 @@ export default function TopBar({ title }: TopBarProps) {
                             }}
                             className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-xs transition ${
                               isSelected
-                                ? "bg-emerald-500/15 text-emerald-300 font-medium"
+                                ? "bg-emerald-500/15 text-emerald-300 font-semibold border border-emerald-500/30"
                                 : "text-zinc-300 hover:bg-zinc-800"
                             }`}
                           >
-                            <div className="flex items-center gap-2 truncate">
+                            <div className="flex items-center gap-2.5 truncate">
                               {v.type === "MOTORCYCLE" ? (
                                 <Bike className="h-4 w-4 shrink-0 text-emerald-400" />
                               ) : (
@@ -182,16 +182,16 @@ export default function TopBar({ title }: TopBarProps) {
                               )}
                               <div className="truncate">
                                 <p className="truncate">{v.name}</p>
-                                <p className="text-[10px] text-zinc-500 truncate">{v.model}</p>
+                                <p className="text-[11px] text-zinc-500 truncate">{v.model}</p>
                               </div>
                             </div>
-                            {isSelected && <Check className="h-3.5 w-3.5 shrink-0 text-emerald-400" />}
+                            {isSelected && <Check className="h-4 w-4 shrink-0 text-emerald-400" />}
                           </button>
                         );
                       })}
                     </div>
 
-                    <div className="my-1 border-t border-zinc-800/80" />
+                    <div className="my-1.5 border-t border-zinc-800" />
 
                     <button
                       type="button"
@@ -201,7 +201,7 @@ export default function TopBar({ title }: TopBarProps) {
                       }}
                       className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-xs font-medium text-emerald-400 transition hover:bg-emerald-500/10"
                     >
-                      <Plus className="h-3.5 w-3.5" />
+                      <Plus className="h-4 w-4" />
                       <span>Add New Vehicle</span>
                     </button>
                   </div>
@@ -215,7 +215,7 @@ export default function TopBar({ title }: TopBarProps) {
             <button
               onClick={() => setUserMenuOpen(!userMenuOpen)}
               aria-label="User account"
-              className="flex h-9 w-9 items-center justify-center rounded-xl border border-zinc-800 bg-zinc-900 text-zinc-300 transition hover:border-zinc-700 hover:bg-zinc-800"
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-zinc-800 bg-zinc-900 text-zinc-300 transition hover:border-zinc-700 hover:bg-zinc-850"
             >
               {currentUser ? (
                 <span className="text-xs font-bold text-emerald-400">
@@ -232,14 +232,14 @@ export default function TopBar({ title }: TopBarProps) {
                   className="fixed inset-0 z-40"
                   onClick={() => setUserMenuOpen(false)}
                 />
-                <div className="absolute right-0 top-full z-50 mt-2 w-56 rounded-2xl border border-zinc-800 bg-zinc-900/98 p-2 shadow-2xl backdrop-blur-xl">
+                <div className="absolute right-0 top-full z-50 mt-2 w-60 rounded-2xl border border-zinc-800 bg-zinc-900/95 p-2 shadow-2xl backdrop-blur-xl">
                   {currentUser ? (
                     <div>
-                      <div className="px-3 py-2 border-b border-zinc-800/80">
-                        <p className="text-xs font-bold text-zinc-100 truncate">
+                      <div className="px-3 py-2 border-b border-zinc-800">
+                        <p className="text-sm font-semibold text-zinc-100 truncate">
                           {currentUser.name}
                         </p>
-                        <p className="text-[10px] text-zinc-500 truncate mt-0.5">
+                        <p className="text-xs text-zinc-500 truncate mt-0.5">
                           {currentUser.email}
                         </p>
                       </div>
@@ -248,37 +248,30 @@ export default function TopBar({ title }: TopBarProps) {
                         <Link
                           href="/more"
                           onClick={() => setUserMenuOpen(false)}
-                          className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-xs text-zinc-300 hover:bg-zinc-800 transition"
+                          className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs text-zinc-300 hover:bg-zinc-800 transition"
                         >
-                          <Settings className="h-3.5 w-3.5 text-zinc-400" />
+                          <Settings className="h-4 w-4 text-zinc-400" />
                           <span>Garage & Settings</span>
                         </Link>
 
                         <button
                           onClick={handleLogout}
-                          className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-xs font-medium text-red-400 hover:bg-red-500/10 transition"
+                          className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-rose-400 hover:bg-rose-500/10 transition"
                         >
-                          <LogOut className="h-3.5 w-3.5" />
+                          <LogOut className="h-4 w-4" />
                           <span>Sign Out</span>
                         </button>
                       </div>
                     </div>
                   ) : (
-                    <div className="flex flex-col gap-1 p-1">
+                    <div className="p-1">
                       <Link
                         href="/login"
                         onClick={() => setUserMenuOpen(false)}
-                        className="flex items-center gap-2 rounded-xl bg-emerald-500/15 border border-emerald-500/30 px-3 py-2 text-xs font-bold text-emerald-300 hover:bg-emerald-500/25 transition"
+                        className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 py-2.5 text-xs font-semibold text-zinc-950 hover:bg-emerald-400 transition"
                       >
-                        <User className="h-3.5 w-3.5" />
-                        <span>Sign In / Demo</span>
-                      </Link>
-                      <Link
-                        href="/register"
-                        onClick={() => setUserMenuOpen(false)}
-                        className="flex items-center gap-2 rounded-xl px-3 py-2 text-xs text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 transition"
-                      >
-                        <span>Create Account</span>
+                        <User className="h-4 w-4" />
+                        <span>Sign In</span>
                       </Link>
                     </div>
                   )}

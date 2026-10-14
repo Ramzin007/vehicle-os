@@ -195,19 +195,19 @@ export default function Home() {
           )}
 
           {/* Recent Refuels Feed */}
-          <section className="rounded-3xl border border-zinc-800 bg-zinc-900/60 p-5 shadow-lg">
+          <section className="rounded-3xl border border-zinc-800 bg-zinc-900/60 p-5">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-400">
+                <div className="flex h-8 w-8 items-center justify-center rounded-xl border border-emerald-500/20 bg-emerald-500/10 text-emerald-400">
                   <Fuel className="h-4 w-4" />
                 </div>
-                <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-300">
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-300">
                   Recent Refuels
                 </h3>
               </div>
               <Link
                 href="/fuel"
-                className="flex items-center text-xs text-emerald-400 hover:text-emerald-300 font-semibold"
+                className="flex items-center text-xs text-emerald-400 hover:text-emerald-300 font-medium"
               >
                 All refuels
                 <ChevronRight className="h-3.5 w-3.5 ml-0.5" />
@@ -223,17 +223,17 @@ export default function Home() {
                 {fuelLogs.slice(0, 4).map((log) => (
                   <div key={log.id} className="py-3 first:pt-0 last:pb-0 flex items-center justify-between">
                     <div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-bold text-zinc-100">
+                      <div className="flex items-center gap-2 font-mono">
+                        <span className="text-sm font-bold text-zinc-100 tabular-nums">
                           {log.odometer.toLocaleString()} km
                         </span>
                         {log.calculatedEconomy && (
-                          <span className="rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 text-[10px] font-bold text-emerald-400">
+                          <span className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 text-[10px] font-semibold text-emerald-400 tabular-nums">
                             {log.calculatedEconomy} km/L
                           </span>
                         )}
                       </div>
-                      <p className="text-xs text-zinc-500 mt-0.5">
+                      <p className="text-xs text-zinc-400 mt-0.5">
                         {new Date(log.date).toLocaleDateString(undefined, {
                           month: "short",
                           day: "numeric",
@@ -241,11 +241,11 @@ export default function Home() {
                         • {log.liters} L {log.stationName ? `• ${log.stationName}` : ""}
                       </p>
                     </div>
-                    <div className="text-right">
-                      <p className="text-sm font-bold text-zinc-100">
+                    <div className="text-right font-mono">
+                      <p className="text-sm font-bold text-zinc-100 tabular-nums">
                         ₹{log.totalCost.toFixed(0)}
                       </p>
-                      <p className="text-[11px] text-zinc-500">
+                      <p className="text-[11px] text-zinc-500 tabular-nums">
                         ₹{log.pricePerLiter.toFixed(1)}/L
                       </p>
                     </div>
@@ -256,19 +256,19 @@ export default function Home() {
           </section>
 
           {/* Upcoming Maintenance Schedule */}
-          <section className="rounded-3xl border border-zinc-800 bg-zinc-900/60 p-5 shadow-lg">
+          <section className="rounded-3xl border border-zinc-800 bg-zinc-900/60 p-5">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-cyan-500/10 text-cyan-400">
+                <div className="flex h-8 w-8 items-center justify-center rounded-xl border border-cyan-500/20 bg-cyan-500/10 text-cyan-400">
                   <Wrench className="h-4 w-4" />
                 </div>
-                <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-300">
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-300">
                   Maintenance Schedule
                 </h3>
               </div>
               <Link
                 href="/maintenance"
-                className="flex items-center text-xs text-cyan-400 hover:text-cyan-300 font-semibold"
+                className="flex items-center text-xs text-cyan-400 hover:text-cyan-300 font-medium"
               >
                 View all
                 <ChevronRight className="h-3.5 w-3.5 ml-0.5" />
@@ -281,18 +281,18 @@ export default function Home() {
                 <span>All scheduled service tasks are up to date!</span>
               </div>
             ) : (
-              <div className="flex flex-col gap-2.5">
+              <div className="flex flex-col gap-2">
                 {maintenanceTasks
                   .filter((t) => t.status !== "COMPLETED")
                   .slice(0, 3)
                   .map((task) => (
                     <div
                       key={task.id}
-                      className="flex items-center justify-between rounded-2xl border border-zinc-800/80 bg-zinc-950/60 p-3.5"
+                      className="flex items-center justify-between rounded-2xl border border-zinc-800/80 bg-zinc-950/60 p-3"
                     >
                       <div>
                         <p className="text-xs font-semibold text-zinc-200">{task.title}</p>
-                        <p className="text-[11px] text-zinc-500 mt-0.5">
+                        <p className="text-[11px] text-zinc-400 mt-0.5 font-mono">
                           {task.dueOdometer
                             ? `Due at ${task.dueOdometer.toLocaleString()} km`
                             : task.dueDate
@@ -301,9 +301,9 @@ export default function Home() {
                         </p>
                       </div>
                       <span
-                        className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${
+                        className={`rounded-full px-2.5 py-0.5 text-[10px] font-semibold font-mono ${
                           task.status === "DUE_SOON"
-                            ? "bg-amber-500/15 text-amber-400 border border-amber-500/30"
+                            ? "bg-amber-500/10 text-amber-400 border border-amber-500/20"
                             : "bg-zinc-800 text-zinc-400"
                         }`}
                       >
@@ -319,7 +319,7 @@ export default function Home() {
         {/* Sidebar Column (lg: 5 cols) */}
         <div className="flex flex-col gap-6 lg:col-span-5">
           {/* Quick Actions Card */}
-          <div className="rounded-3xl border border-zinc-800 bg-zinc-900/60 p-5 shadow-lg">
+          <div className="rounded-3xl border border-zinc-800 bg-zinc-900/60 p-5">
             <QuickActions
               onRefresh={() => {
                 loadData();
@@ -329,18 +329,18 @@ export default function Home() {
           </div>
 
           {/* Care Score & Health Breakdown Card */}
-          <section className="rounded-3xl border border-zinc-800 bg-zinc-900/80 p-5 shadow-lg">
+          <section className="rounded-3xl border border-zinc-800 bg-zinc-900/80 p-5">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
-                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-400">
+                <div className="flex h-8 w-8 items-center justify-center rounded-xl border border-emerald-500/20 bg-emerald-500/10 text-emerald-400">
                   <Sparkles className="h-4 w-4" />
                 </div>
-                <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-200">
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-200">
                   Care Score & Health
                 </h3>
               </div>
               <span
-                className="rounded-full px-2.5 py-0.5 text-xs font-bold border"
+                className="rounded-full px-2.5 py-0.5 text-xs font-semibold border font-mono"
                 style={{
                   color: careScoreResult.color,
                   borderColor: `${careScoreResult.color}40`,
@@ -356,7 +356,7 @@ export default function Home() {
               <div>
                 <div className="flex justify-between text-[11px] text-zinc-400 mb-1">
                   <span>Maintenance Compliance</span>
-                  <span className="font-semibold text-zinc-200">{careScoreResult.maintenancePoints}/35 pts</span>
+                  <span className="font-semibold text-zinc-200 font-mono">{careScoreResult.maintenancePoints}/35 pts</span>
                 </div>
                 <div className="h-1.5 w-full bg-zinc-800 rounded-full overflow-hidden">
                   <div
@@ -369,7 +369,7 @@ export default function Home() {
               <div>
                 <div className="flex justify-between text-[11px] text-zinc-400 mb-1">
                   <span>Document Health</span>
-                  <span className="font-semibold text-zinc-200">{careScoreResult.documentPoints}/30 pts</span>
+                  <span className="font-semibold text-zinc-200 font-mono">{careScoreResult.documentPoints}/30 pts</span>
                 </div>
                 <div className="h-1.5 w-full bg-zinc-800 rounded-full overflow-hidden">
                   <div
@@ -382,7 +382,7 @@ export default function Home() {
               <div>
                 <div className="flex justify-between text-[11px] text-zinc-400 mb-1">
                   <span>Fuel Tracking Regularity</span>
-                  <span className="font-semibold text-zinc-200">{careScoreResult.refuelPoints}/20 pts</span>
+                  <span className="font-semibold text-zinc-200 font-mono">{careScoreResult.refuelPoints}/20 pts</span>
                 </div>
                 <div className="h-1.5 w-full bg-zinc-800 rounded-full overflow-hidden">
                   <div
@@ -395,7 +395,7 @@ export default function Home() {
 
             {/* Recommendations */}
             <div className="mt-4 flex flex-col gap-2">
-              <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
                 Action Items
               </p>
               {careScoreResult.recommendations.map((rec, i) => (

@@ -81,12 +81,12 @@ export default function AddVehicleModal({ isOpen, onClose }: AddVehicleModalProp
       <div className="w-full max-w-lg rounded-t-3xl sm:rounded-3xl border border-zinc-800 bg-zinc-900 p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between pb-4 border-b border-zinc-800">
           <div>
-            <h2 className="text-lg font-semibold text-zinc-100">Add New Vehicle</h2>
+            <h2 className="text-lg font-bold text-zinc-100">Add New Vehicle</h2>
             <p className="text-xs text-zinc-400">Track another motorcycle, car, or scooter</p>
           </div>
           <button
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-800 text-zinc-400 hover:text-zinc-200"
+            className="flex h-8 w-8 items-center justify-center rounded-xl bg-zinc-800 text-zinc-400 hover:text-zinc-200"
           >
             <X className="h-4 w-4" />
           </button>
@@ -211,14 +211,14 @@ export default function AddVehicleModal({ isOpen, onClose }: AddVehicleModalProp
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 rounded-xl border border-zinc-800 bg-zinc-950 py-2.5 text-xs font-medium text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200"
+              className="flex-1 rounded-xl border border-zinc-800 bg-zinc-950 py-3 text-xs font-semibold text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200 transition"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-emerald-500 py-2.5 text-xs font-semibold text-zinc-950 hover:bg-emerald-400 disabled:opacity-50"
+              className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-emerald-500 py-3 text-xs font-semibold text-zinc-950 hover:bg-emerald-400 disabled:opacity-50 transition shadow-lg shadow-emerald-500/20"
             >
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save Vehicle"}
             </button>

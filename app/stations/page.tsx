@@ -106,15 +106,17 @@ export default function StationsPage() {
   }, [requestGeolocation]);
 
   return (
-    <div className="flex flex-col gap-5 p-4 sm:p-5">
+    <div className="flex flex-col gap-6 p-4 sm:p-6 lg:p-8">
       {/* Header & Locate CTA */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold tracking-tight text-zinc-100 flex items-center gap-2">
-            <MapPin className="h-5 w-5 text-amber-400" />
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-zinc-100 flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-amber-500/20 bg-amber-500/10 text-amber-400">
+              <MapPin className="h-5 w-5" />
+            </div>
             Nearby Fuel Stations
           </h1>
-          <p className="text-xs text-zinc-400 mt-0.5">
+          <p className="text-xs text-zinc-400 mt-1">
             {userCoords
               ? "Accurate to your GPS location"
               : "Discover petrol stations & air points"}
@@ -124,7 +126,7 @@ export default function StationsPage() {
         <button
           onClick={requestGeolocation}
           disabled={locating}
-          className="flex items-center gap-1.5 rounded-xl border border-zinc-800 bg-zinc-900 px-3 py-2 text-xs font-semibold text-zinc-200 transition hover:bg-zinc-800 disabled:opacity-50"
+          className="flex items-center gap-2 rounded-xl border border-zinc-800 bg-zinc-900 px-3.5 py-2 text-xs font-medium text-zinc-200 transition hover:bg-zinc-850 disabled:opacity-50"
         >
           {locating ? (
             <Loader2 className="h-4 w-4 animate-spin text-amber-400" />
@@ -136,16 +138,16 @@ export default function StationsPage() {
       </div>
 
       {/* GPS Status Banner */}
-      <div className="rounded-2xl border border-zinc-800 bg-zinc-900/80 p-3.5 flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-500/10 text-amber-400">
-            <Compass className="h-4 w-4" />
+      <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-amber-500/20 bg-amber-500/10 text-amber-400">
+            <Compass className="h-5 w-5" />
           </div>
           <div>
             <p className="text-xs font-semibold text-zinc-200">
               {userCoords ? "GPS Active" : "Location Status"}
             </p>
-            <p className="text-[11px] text-zinc-500 mt-0.5">
+            <p className="text-xs text-zinc-400 mt-0.5 font-mono">
               {userCoords
                 ? `Lat: ${userCoords.lat.toFixed(4)}, Lng: ${userCoords.lng.toFixed(4)}`
                 : locationError || "Detecting nearest stations..."}
@@ -154,8 +156,8 @@ export default function StationsPage() {
         </div>
 
         {userCoords && (
-          <span className="flex items-center gap-1 text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
-            <CheckCircle2 className="h-3 w-3" />
+          <span className="flex items-center gap-1.5 text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20 font-mono">
+            <CheckCircle2 className="h-3.5 w-3.5" />
             Synced
           </span>
         )}
@@ -178,12 +180,12 @@ export default function StationsPage() {
             placeholder="Search your city or locality (e.g. Kozhikode, Indiranagar, Kochi)..."
             value={searchCity}
             onChange={(e) => setSearchCity(e.target.value)}
-            className="w-full rounded-xl border border-zinc-800 bg-zinc-900/90 pl-10 pr-3 py-2 text-xs text-zinc-200 placeholder-zinc-500 focus:border-amber-500 focus:outline-none"
+            className="w-full rounded-xl border border-zinc-800 bg-zinc-900/90 pl-10 pr-3 py-2 text-xs text-zinc-200 placeholder-zinc-500 focus:border-zinc-700 focus:outline-none"
           />
         </div>
         <button
           type="submit"
-          className="rounded-xl bg-amber-500 px-3.5 py-2 text-xs font-bold text-zinc-950 hover:bg-amber-400 transition shrink-0"
+          className="rounded-xl bg-amber-500 px-4 py-2 text-xs font-semibold text-zinc-950 hover:bg-amber-400 transition shrink-0"
         >
           Search Area
         </button>
@@ -198,39 +200,39 @@ export default function StationsPage() {
         }
         target="_blank"
         rel="noopener noreferrer"
-        className="flex items-center justify-between rounded-2xl border border-amber-500/40 bg-gradient-to-r from-amber-500/15 via-zinc-900 to-zinc-900 p-4 transition hover:border-amber-500/60 shadow-lg group"
+        className="flex items-center justify-between rounded-2xl border border-amber-500/20 bg-gradient-to-r from-amber-500/10 via-zinc-900/60 to-zinc-900/60 p-4 transition hover:border-amber-500/40"
       >
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500 text-zinc-950 font-bold shrink-0 shadow-md">
+        <div className="flex items-center gap-3.5">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500 text-zinc-950 font-bold shrink-0">
             <Navigation className="h-5 w-5" />
           </div>
           <div>
-            <p className="text-xs font-bold text-zinc-100 flex items-center gap-1.5">
+            <p className="text-sm font-semibold text-zinc-100 flex items-center gap-2">
               <span>Open Live Google Maps Radar</span>
-              <span className="rounded bg-amber-500/20 px-1.5 py-0.5 text-[10px] font-semibold text-amber-300">
+              <span className="rounded bg-amber-500/20 px-1.5 py-0.5 text-[10px] font-semibold text-amber-300 font-mono">
                 Live Traffic & Fuel Prices
               </span>
             </p>
-            <p className="text-[11px] text-zinc-400 mt-0.5">
+            <p className="text-xs text-zinc-400 mt-0.5">
               Launch turn-by-turn navigation directly to the nearest open pump
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-1 text-xs font-bold text-amber-400 group-hover:text-amber-300 shrink-0">
+        <div className="flex items-center gap-1 text-xs font-semibold text-amber-400 shrink-0">
           <span>Open Maps</span>
-          <ExternalLink className="h-4 w-4" />
+          <ExternalLink className="h-3.5 w-3.5" />
         </div>
       </a>
 
       {/* Brand Filters */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+      <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
         {["ALL", "IndianOil", "Bharat Petroleum", "HPCL", "Shell", "Nayara"].map((brand) => (
           <button
             key={brand}
             onClick={() => setSelectedBrand(brand)}
-            className={`rounded-xl px-3 py-1.5 text-xs font-semibold whitespace-nowrap transition ${
+            className={`rounded-xl px-3.5 py-1.5 text-xs font-semibold whitespace-nowrap transition ${
               selectedBrand === brand
-                ? "bg-amber-500/20 text-amber-300 border border-amber-500/40"
+                ? "bg-amber-500/15 text-amber-300 border border-amber-500/30"
                 : "bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-zinc-200"
             }`}
           >
@@ -247,7 +249,7 @@ export default function StationsPage() {
             <p className="text-xs">Finding nearest petrol stations...</p>
           </div>
         ) : stations.filter((s) => selectedBrand === "ALL" || s.brand.toLowerCase().includes(selectedBrand.toLowerCase())).length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-zinc-800 p-8 text-center">
+          <div className="rounded-3xl border border-dashed border-zinc-800 p-8 text-center bg-zinc-900/40">
             <Fuel className="mx-auto h-8 w-8 text-zinc-600 mb-2" />
             <p className="text-sm font-semibold text-zinc-300">No stations found for &quot;{selectedBrand}&quot;</p>
             <button
@@ -264,17 +266,17 @@ export default function StationsPage() {
               .map((st) => (
               <div
                 key={st.id}
-                className="group rounded-2xl border border-zinc-800 bg-zinc-900/90 p-4 transition hover:border-zinc-700 shadow-md flex flex-col justify-between"
+                className="group rounded-2xl border border-zinc-800/80 bg-zinc-900/60 p-4 transition hover:border-zinc-750 flex flex-col justify-between"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-base font-bold text-zinc-100">
+                      <span className="text-sm font-bold text-zinc-100">
                         {st.name}
                       </span>
 
                       <span
-                        className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold ${
+                        className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold font-mono ${
                           brandColors[st.brand] || "bg-zinc-800 text-zinc-300 border-zinc-700"
                         }`}
                       >
@@ -285,11 +287,11 @@ export default function StationsPage() {
                     <p className="mt-1 text-xs text-zinc-400">{st.address}</p>
 
                     {/* Amenities */}
-                    <div className="mt-2.5 flex flex-wrap gap-1.5">
+                    <div className="mt-3 flex flex-wrap gap-1.5">
                       {st.amenities.map((am, i) => (
                         <span
                           key={i}
-                          className="rounded-lg bg-zinc-950 px-2 py-0.5 text-[10px] text-zinc-400 border border-zinc-800"
+                          className="rounded-lg bg-zinc-950 px-2.5 py-0.5 text-[10px] text-zinc-400 border border-zinc-800 font-mono"
                         >
                           {am}
                         </span>
@@ -298,11 +300,11 @@ export default function StationsPage() {
                   </div>
 
                   <div className="flex flex-col items-end gap-2 shrink-0">
-                    <div className="text-right">
-                      <span className="text-base font-bold text-amber-400">
+                    <div className="text-right font-mono">
+                      <span className="text-lg font-bold text-amber-400 tabular-nums">
                         {st.distanceKm} km
                       </span>
-                      <p className="text-[10px] text-zinc-500">{st.openStatus}</p>
+                      <p className="text-xs text-zinc-500 font-sans">{st.openStatus}</p>
                     </div>
 
                     <a
@@ -313,9 +315,9 @@ export default function StationsPage() {
                       }
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-1.5 rounded-xl bg-zinc-800 px-3 py-1.5 text-xs font-semibold text-zinc-200 transition hover:bg-zinc-700 hover:text-white"
+                      className="flex items-center gap-1.5 rounded-xl border border-zinc-800 bg-zinc-800/80 px-3 py-1.5 text-xs font-medium text-zinc-200 transition hover:bg-zinc-700 hover:text-white"
                     >
-                      <Navigation className="h-3 w-3 text-amber-400" />
+                      <Navigation className="h-3.5 w-3.5 text-amber-400" />
                       <span>Route</span>
                       <ExternalLink className="h-3 w-3 text-zinc-500" />
                     </a>
