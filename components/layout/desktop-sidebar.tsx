@@ -12,7 +12,6 @@ import {
   ReceiptText,
   MapPin,
   Settings,
-  ShieldCheck,
   Bike,
   Car,
   ChevronDown,
@@ -22,6 +21,7 @@ import {
   LogOut,
   User,
 } from "lucide-react";
+import VehicleOsLogo from "@/components/ui/vehicle-os-logo";
 import AddVehicleModal from "@/components/modals/add-vehicle-modal";
 import AddRefuelModal from "@/components/modals/add-refuel-modal";
 import AddServiceModal from "@/components/modals/add-service-modal";
@@ -73,9 +73,7 @@ export default function DesktopSidebar() {
         <div className="flex flex-col gap-6">
           {/* Brand Header */}
           <Link href="/" className="flex items-center gap-3 px-2 py-1">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-700 shadow-lg shadow-emerald-500/20">
-              <ShieldCheck className="h-6 w-6 text-zinc-950" />
-            </div>
+            <VehicleOsLogo className="h-10 w-10 shrink-0 shadow-lg shadow-emerald-500/20" withContainer={true} />
             <div>
               <div className="flex items-center gap-1.5">
                 <span className="text-xs font-bold uppercase tracking-widest text-emerald-400">

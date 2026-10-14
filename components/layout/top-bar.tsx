@@ -9,7 +9,6 @@ import {
   Plus,
   Bike,
   Car,
-  ShieldCheck,
   Settings,
   Check,
   Fuel,
@@ -17,6 +16,7 @@ import {
   User,
   LogOut,
 } from "lucide-react";
+import VehicleOsLogo from "@/components/ui/vehicle-os-logo";
 import AddVehicleModal from "@/components/modals/add-vehicle-modal";
 import AddRefuelModal from "@/components/modals/add-refuel-modal";
 import AddServiceModal from "@/components/modals/add-service-modal";
@@ -78,9 +78,7 @@ export default function TopBar({ title }: TopBarProps) {
         {/* Mobile View: Brand & Title */}
         <div className="flex md:hidden items-center gap-2.5 min-w-0 flex-1 mr-2">
           <Link href="/" className="flex items-center gap-2.5 min-w-0">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 shadow-lg shadow-emerald-500/20">
-              <ShieldCheck className="h-5 w-5 text-zinc-950" />
-            </div>
+            <VehicleOsLogo className="h-9 w-9 shrink-0 shadow-lg shadow-emerald-500/20" withContainer={true} />
             <div className="min-w-0">
               <div className="flex items-center gap-1.5">
                 <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-400">

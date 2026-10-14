@@ -33,6 +33,10 @@ export const metadata: Metadata = {
     title: "VehicleOS",
   },
   icons: {
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "any" },
+    ],
     apple: "/icons/apple-touch-icon.png",
   },
 };
