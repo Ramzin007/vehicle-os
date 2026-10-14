@@ -10,6 +10,7 @@ import {
   Calendar,
   Gauge,
   Trash2,
+  Edit2,
   Check,
   RotateCw,
   Coins,
@@ -40,6 +41,7 @@ export default function MaintenancePage() {
   const [_loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"ACTIVE" | "COMPLETED" | "ALL">("ACTIVE");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [editingTask, setEditingTask] = useState<MaintenanceTask | null>(null);
   const [completingTaskId, setCompletingTaskId] = useState<string | null>(null);
   const [completionOdo, setCompletionOdo] = useState("");
   const [completionCost, setCompletionCost] = useState("");
@@ -418,6 +420,14 @@ export default function MaintenancePage() {
                       )}
 
                       <button
+                        onClick={() => setEditingTask(task)}
+                        className="text-zinc-500 hover:text-cyan-400 p-1.5 rounded-lg opacity-100 sm:opacity-0 sm:group-hover:opacity-100 hover:bg-cyan-500/10 transition"
+                        title="Edit task"
+                      >
+                        <Edit2 className="h-4 w-4" />
+                      </button>
+
+                      <button
                         onClick={() => handleDelete(task.id)}
                         className="text-zinc-500 hover:text-rose-400 p-1.5 rounded-lg opacity-100 sm:opacity-0 sm:group-hover:opacity-100 hover:bg-rose-500/10 transition"
                         title="Delete task"
@@ -492,11 +502,15 @@ export default function MaintenancePage() {
         )}
       </section>
 
-      {/* Add Task Modal */}
-      {isAddModalOpen && (
+      {/* Add / Edit Task Modal */}
+      {(isAddModalOpen || Boolean(editingTask)) && (
         <AddServiceModal
-          isOpen={isAddModalOpen}
-          onClose={() => setIsAddModalOpen(false)}
+          isOpen={isAddModalOpen || Boolean(editingTask)}
+          initialData={editingTask}
+          onClose={() => {
+            setIsAddModalOpen(false);
+            setEditingTask(null);
+          }}
           onSuccess={() => {
             fetchTasks();
             refreshVehicles();

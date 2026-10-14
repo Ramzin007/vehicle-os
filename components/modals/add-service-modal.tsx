@@ -1,16 +1,33 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X, Wrench, Loader2 } from "lucide-react";
 import { useVehicle } from "@/components/context/vehicle-context";
+
+export interface ServiceInitialData {
+  id: string;
+  vehicleId: string;
+  title: string;
+  category: string;
+  priority: string;
+  status: string;
+  dueOdometer?: number | null;
+  dueDate?: string | null;
+  intervalKm?: number | null;
+  intervalMonths?: number | null;
+  cost?: number | null;
+  serviceCenter?: string | null;
+  notes?: string | null;
+}
 
 interface AddServiceModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  initialData?: ServiceInitialData | null;
 }
 
-export default function AddServiceModal({ isOpen, onClose, onSuccess }: AddServiceModalProps) {
+export default function AddServiceModal({ isOpen, onClose, onSuccess, initialData }: AddServiceModalProps) {
   const { activeVehicle } = useVehicle();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -26,6 +43,36 @@ export default function AddServiceModal({ isOpen, onClose, onSuccess }: AddServi
   const [cost, setCost] = useState("");
   const [serviceCenter, setServiceCenter] = useState("");
   const [notes, setNotes] = useState("");
+
+  const isEditing = Boolean(initialData?.id);
+
+  useEffect(() => {
+    if (initialData) {
+      setTitle(initialData.title || "");
+      setCategory(initialData.category || "ROUTINE");
+      setPriority(initialData.priority || "MEDIUM");
+      setStatus(initialData.status || "PENDING");
+      setDueOdometer(initialData.dueOdometer != null ? String(initialData.dueOdometer) : "");
+      setDueDate(initialData.dueDate ? new Date(initialData.dueDate).toISOString().split("T")[0] : "");
+      setIntervalKm(initialData.intervalKm != null ? String(initialData.intervalKm) : "");
+      setIntervalMonths(initialData.intervalMonths != null ? String(initialData.intervalMonths) : "");
+      setCost(initialData.cost != null ? String(initialData.cost) : "");
+      setServiceCenter(initialData.serviceCenter || "");
+      setNotes(initialData.notes || "");
+    } else {
+      setTitle("");
+      setCategory("ROUTINE");
+      setPriority("MEDIUM");
+      setStatus("PENDING");
+      setDueOdometer("");
+      setDueDate("");
+      setIntervalKm("");
+      setIntervalMonths("");
+      setCost("");
+      setServiceCenter("");
+      setNotes("");
+    }
+  }, [initialData, isOpen]);
 
   if (!isOpen) return null;
 
@@ -66,30 +113,50 @@ export default function AddServiceModal({ isOpen, onClose, onSuccess }: AddServi
     setError(null);
 
     try {
-      const res = await fetch("/api/maintenance", {
-        method: "POST",
+      const url = "/api/maintenance";
+      const method = isEditing ? "PATCH" : "POST";
+
+      const payload = isEditing
+        ? {
+            id: initialData?.id,
+            title,
+            category,
+            priority,
+            status,
+            dueOdometer: dueOdometer ? Number(dueOdometer) : null,
+            dueDate: dueDate || null,
+            intervalKm: intervalKm ? Number(intervalKm) : null,
+            intervalMonths: intervalMonths ? Number(intervalMonths) : null,
+            cost: cost ? Number(cost) : 0,
+            serviceCenter: serviceCenter || null,
+            notes: notes || null,
+          }
+        : {
+            vehicleId: activeVehicle.id,
+            title,
+            category,
+            priority,
+            status,
+            dueOdometer: dueOdometer ? Number(dueOdometer) : null,
+            dueDate: dueDate || null,
+            intervalKm: intervalKm ? Number(intervalKm) : null,
+            intervalMonths: intervalMonths ? Number(intervalMonths) : null,
+            cost: cost ? Number(cost) : 0,
+            serviceCenter: serviceCenter || null,
+            notes: notes || null,
+            lastCompletedOdometer: status === "COMPLETED" ? activeVehicle.currentOdometer : null,
+            lastCompletedDate: status === "COMPLETED" ? new Date().toISOString() : null,
+          };
+
+      const res = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          vehicleId: activeVehicle.id,
-          title,
-          category,
-          priority,
-          status,
-          dueOdometer: dueOdometer ? Number(dueOdometer) : null,
-          dueDate: dueDate || null,
-          intervalKm: intervalKm ? Number(intervalKm) : null,
-          intervalMonths: intervalMonths ? Number(intervalMonths) : null,
-          cost: cost ? Number(cost) : 0,
-          serviceCenter: serviceCenter || null,
-          notes: notes || null,
-          lastCompletedOdometer: status === "COMPLETED" ? activeVehicle.currentOdometer : null,
-          lastCompletedDate: status === "COMPLETED" ? new Date().toISOString() : null,
-        }),
+        body: JSON.stringify(payload),
       });
 
       const data = await res.json();
       if (!res.ok || !data.success) {
-        throw new Error(data.error || "Failed to add service task");
+        throw new Error(data.error || `Failed to ${isEditing ? "update" : "add"} service task`);
       }
 
       onSuccess();
@@ -111,7 +178,9 @@ export default function AddServiceModal({ isOpen, onClose, onSuccess }: AddServi
               <Wrench className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-zinc-100">Schedule Service Task</h2>
+              <h2 className="text-lg font-bold text-zinc-100">
+                {isEditing ? "Edit Service Task" : "Schedule Service Task"}
+              </h2>
               <p className="text-xs text-zinc-400 font-mono">
                 {activeVehicle ? `${activeVehicle.name} • ${activeVehicle.model}` : "Maintenance schedule"}
               </p>
@@ -131,29 +200,31 @@ export default function AddServiceModal({ isOpen, onClose, onSuccess }: AddServi
           </div>
         )}
 
-        {/* Quick Presets */}
-        <div className="mt-4">
-          <p className="text-[11px] font-medium text-zinc-400">Quick Presets</p>
-          <div className="mt-1.5 flex flex-wrap gap-1.5">
-            {presets.map((p) => (
-              <button
-                key={p.title}
-                type="button"
-                onClick={() => applyPreset(p)}
-                className="rounded-lg border border-zinc-800 bg-zinc-950 px-2.5 py-1 text-[11px] text-zinc-300 hover:border-cyan-500/50 hover:bg-zinc-800"
-              >
-                + {p.title}
-              </button>
-            ))}
+        {/* Quick Presets (shown when creating new tasks) */}
+        {!isEditing && (
+          <div className="mt-4">
+            <p className="text-[11px] font-medium text-zinc-400">Quick Presets</p>
+            <div className="mt-1.5 flex flex-wrap gap-1.5">
+              {presets.map((p) => (
+                <button
+                  key={p.title}
+                  type="button"
+                  onClick={() => applyPreset(p)}
+                  className="rounded-lg border border-zinc-800 bg-zinc-950 px-2.5 py-1 text-[11px] text-zinc-300 hover:border-cyan-500/50 hover:bg-zinc-800"
+                >
+                  + {p.title}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
-        <form onSubmit={handleSubmit} className="mt-4 flex flex-col gap-4">
+        <form onSubmit={handleSubmit} className="mt-4 flex flex-col gap-3.5">
           <div>
-            <label className="text-xs font-medium text-zinc-400">Task Title</label>
+            <label className="text-xs font-medium text-zinc-400">Service Task Title</label>
             <input
               type="text"
-              placeholder="e.g. Engine Oil Replacement"
+              placeholder="e.g. Engine Oil & Filter Change"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
@@ -170,13 +241,13 @@ export default function AddServiceModal({ isOpen, onClose, onSuccess }: AddServi
                 className="mt-1.5 w-full rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 focus:border-cyan-500 focus:outline-none"
               >
                 <option value="ROUTINE">Routine Service</option>
-                <option value="OIL">Engine Oil</option>
+                <option value="OIL">Oil & Fluids</option>
+                <option value="BRAKES">Brakes</option>
                 <option value="CHAIN">Drive Chain</option>
-                <option value="BRAKES">Brakes & Fluids</option>
-                <option value="TIRES">Tires & Alignment</option>
-                <option value="ELECTRICAL">Battery & Electrical</option>
-                <option value="INSPECTION">General Inspection</option>
-                <option value="REPAIR">Repair</option>
+                <option value="TIRES">Tires & Wheels</option>
+                <option value="ELECTRICAL">Electrical & Battery</option>
+                <option value="REPAIR">Repair / Replacement</option>
+                <option value="INSPECTION">Inspection</option>
               </select>
             </div>
             <div>
@@ -188,15 +259,15 @@ export default function AddServiceModal({ isOpen, onClose, onSuccess }: AddServi
               >
                 <option value="LOW">Low</option>
                 <option value="MEDIUM">Medium</option>
-                <option value="HIGH">High</option>
-                <option value="URGENT">Urgent</option>
+                <option value="HIGH">High (Urgent)</option>
               </select>
             </div>
           </div>
 
+          {/* Trigger Condition: Due Odo OR Due Date */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs font-medium text-zinc-400">Due at Odometer (km)</label>
+              <label className="text-xs font-medium text-zinc-400">Due Odometer (km)</label>
               <input
                 type="number"
                 placeholder="e.g. 5000"
@@ -225,22 +296,22 @@ export default function AddServiceModal({ isOpen, onClose, onSuccess }: AddServi
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs font-medium text-zinc-400">Repeating Interval (km)</label>
+              <label className="text-xs font-medium text-zinc-400">Repeat Every (km)</label>
               <input
                 type="number"
-                placeholder="e.g. 3000"
+                placeholder="e.g. 5000"
                 value={intervalKm}
                 onChange={(e) => setIntervalKm(e.target.value)}
                 className="mt-1.5 w-full rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-600 focus:border-cyan-500 focus:outline-none"
               />
             </div>
             <div>
-              <label className="text-xs font-medium text-zinc-400">Estimated Cost (₹)</label>
+              <label className="text-xs font-medium text-zinc-400">Repeat Every (Months)</label>
               <input
                 type="number"
-                placeholder="e.g. 1200"
-                value={cost}
-                onChange={(e) => setCost(e.target.value)}
+                placeholder="e.g. 6"
+                value={intervalMonths}
+                onChange={(e) => setIntervalMonths(e.target.value)}
                 className="mt-1.5 w-full rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-600 focus:border-cyan-500 focus:outline-none"
               />
             </div>
@@ -248,16 +319,14 @@ export default function AddServiceModal({ isOpen, onClose, onSuccess }: AddServi
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs font-medium text-zinc-400">Status</label>
-              <select
-                value={status}
-                onChange={(e) => setStatus(e.target.value)}
-                className="mt-1.5 w-full rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 focus:border-cyan-500 focus:outline-none"
-              >
-                <option value="PENDING">Pending</option>
-                <option value="DUE_SOON">Due Soon</option>
-                <option value="COMPLETED">Already Completed</option>
-              </select>
+              <label className="text-xs font-medium text-zinc-400">Estimated Cost (₹)</label>
+              <input
+                type="number"
+                placeholder="e.g. 1500"
+                value={cost}
+                onChange={(e) => setCost(e.target.value)}
+                className="mt-1.5 w-full rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-600 focus:border-cyan-500 focus:outline-none"
+              />
             </div>
             <div>
               <label className="text-xs font-medium text-zinc-400">Service Center</label>
@@ -295,7 +364,13 @@ export default function AddServiceModal({ isOpen, onClose, onSuccess }: AddServi
               disabled={loading}
               className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-cyan-500 py-3 text-xs font-semibold text-zinc-950 hover:bg-cyan-400 disabled:opacity-50 transition shadow-lg shadow-cyan-500/20"
             >
-              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save Service Task"}
+              {loading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : isEditing ? (
+                "Save Changes"
+              ) : (
+                "Save Service Task"
+              )}
             </button>
           </div>
         </form>
