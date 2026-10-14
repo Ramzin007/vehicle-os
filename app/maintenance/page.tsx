@@ -36,9 +36,17 @@ interface MaintenanceTask {
 
 export default function MaintenancePage() {
   const { activeVehicle, refreshVehicles } = useVehicle();
-  const [tasks, setTasks] = useState<MaintenanceTask[]>([]);
+  const [tasks, setTasks] = useState<MaintenanceTask[]>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const cached = sessionStorage.getItem("vehicleos_cached_tasks");
+        if (cached) return JSON.parse(cached);
+      } catch {}
+    }
+    return [];
+  });
   const [serviceExpenseTotal, setServiceExpenseTotal] = useState<number>(0);
-  const [_loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(() => tasks.length === 0);
   const [activeTab, setActiveTab] = useState<"ACTIVE" | "COMPLETED" | "ALL">("ACTIVE");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<MaintenanceTask | null>(null);
@@ -49,28 +57,35 @@ export default function MaintenancePage() {
 
   const fetchTasks = useCallback(async () => {
     if (!activeVehicle) return;
-    setLoading(true);
-    try {
-      const [maintRes, expRes] = await Promise.all([
-        fetch(`/api/maintenance?vehicleId=${activeVehicle.id}`),
-        fetch(`/api/expenses?vehicleId=${activeVehicle.id}`),
-      ]);
-      const [maintData, expData] = await Promise.all([maintRes.json(), expRes.json()]);
 
-      if (maintData.success) {
-        setTasks(maintData.tasks || []);
-      }
-      if (expData.success && Array.isArray(expData.expenses)) {
-        const serviceTotal = expData.expenses
-          .filter((e: { category: string; amount: number }) => e.category === "SERVICE" || e.category === "PARTS")
-          .reduce((acc: number, e: { amount: number }) => acc + (e.amount || 0), 0);
-        setServiceExpenseTotal(serviceTotal);
-      }
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
-    }
+    // Fetch maintenance tasks with immediate render upon arrival
+    fetch(`/api/maintenance?vehicleId=${activeVehicle.id}`)
+      .then((res) => res.json())
+      .then((maintData) => {
+        if (maintData.success && Array.isArray(maintData.tasks)) {
+          setTasks(maintData.tasks);
+          if (typeof window !== "undefined") {
+            try {
+              sessionStorage.setItem("vehicleos_cached_tasks", JSON.stringify(maintData.tasks));
+            } catch {}
+          }
+        }
+      })
+      .catch((e) => console.error(e))
+      .finally(() => setLoading(false));
+
+    // Fetch expenses in parallel without blocking task card rendering
+    fetch(`/api/expenses?vehicleId=${activeVehicle.id}`)
+      .then((res) => res.json())
+      .then((expData) => {
+        if (expData.success && Array.isArray(expData.expenses)) {
+          const serviceTotal = expData.expenses
+            .filter((e: { category: string; amount: number }) => e.category === "SERVICE" || e.category === "PARTS")
+            .reduce((acc: number, e: { amount: number }) => acc + (e.amount || 0), 0);
+          setServiceExpenseTotal(serviceTotal);
+        }
+      })
+      .catch((e) => console.error(e));
   }, [activeVehicle]);
 
   useEffect(() => {
@@ -232,7 +247,26 @@ export default function MaintenancePage() {
 
       {/* Tasks List */}
       <section className="flex flex-col gap-3">
-        {filteredTasks.length === 0 ? (
+        {loading && tasks.length === 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[1, 2, 3, 4].map((i) => (
+              <div
+                key={i}
+                className="animate-pulse rounded-3xl border border-zinc-800/60 bg-zinc-900/40 p-5 flex flex-col gap-3"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="h-4 w-36 rounded-lg bg-zinc-800" />
+                  <div className="h-5 w-16 rounded-full bg-zinc-800" />
+                </div>
+                <div className="h-3 w-48 rounded bg-zinc-800/80 mt-1" />
+                <div className="flex items-center gap-3 pt-3">
+                  <div className="h-3 w-28 rounded bg-zinc-800/60" />
+                  <div className="h-3 w-20 rounded bg-zinc-800/60" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : filteredTasks.length === 0 ? (
           <div className="rounded-3xl border border-dashed border-zinc-800 p-8 text-center bg-zinc-900/40">
             <CheckCircle2 className="mx-auto h-8 w-8 text-emerald-400 mb-2" />
             <p className="text-sm font-semibold text-zinc-200">

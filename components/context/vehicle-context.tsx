@@ -36,9 +36,24 @@ interface VehicleContextType {
 const VehicleContext = createContext<VehicleContextType | undefined>(undefined);
 
 export function VehicleProvider({ children }: { children: React.ReactNode }) {
-  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
-  const [activeVehicleId, setActiveVehicleIdState] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [vehicles, setVehicles] = useState<Vehicle[]>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const cached = localStorage.getItem("vehicleos_cached_vehicles");
+        if (cached) return JSON.parse(cached);
+      } catch {}
+    }
+    return [];
+  });
+  const [activeVehicleId, setActiveVehicleIdState] = useState<string | null>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        return localStorage.getItem("vehicleos_active_vehicle_id");
+      } catch {}
+    }
+    return null;
+  });
+  const [isLoading, setIsLoading] = useState(false);
 
   const refreshVehicles = useCallback(async () => {
     try {
@@ -46,6 +61,11 @@ export function VehicleProvider({ children }: { children: React.ReactNode }) {
       const data = await res.json();
       if (data.success && Array.isArray(data.vehicles)) {
         setVehicles(data.vehicles);
+        if (typeof window !== "undefined") {
+          try {
+            localStorage.setItem("vehicleos_cached_vehicles", JSON.stringify(data.vehicles));
+          } catch {}
+        }
         if (data.vehicles.length > 0) {
           // If no active vehicle is set, default to the marked default or first
           setActiveVehicleIdState((prev) => {
@@ -53,7 +73,11 @@ export function VehicleProvider({ children }: { children: React.ReactNode }) {
               return prev;
             }
             const def = data.vehicles.find((v: Vehicle) => v.isDefault);
-            return def ? def.id : data.vehicles[0].id;
+            const chosenId = def ? def.id : data.vehicles[0].id;
+            if (typeof window !== "undefined") {
+              localStorage.setItem("vehicleos_active_vehicle_id", chosenId);
+            }
+            return chosenId;
           });
         }
       }

@@ -15,11 +15,6 @@ export async function GET(req: Request) {
         { priority: "desc" },
         { dueDate: "asc" },
       ],
-      include: {
-        vehicle: {
-          select: { name: true, model: true, currentOdometer: true },
-        },
-      },
     });
 
     return NextResponse.json({ success: true, tasks });
