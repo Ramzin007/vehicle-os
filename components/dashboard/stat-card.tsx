@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 
 interface StatCardProps {
@@ -7,6 +8,7 @@ interface StatCardProps {
   subtext?: string;
   icon?: LucideIcon;
   accentColor?: "emerald" | "cyan" | "amber" | "purple" | "zinc";
+  href?: string;
 }
 
 const colorStyles = {
@@ -24,19 +26,20 @@ export default function StatCard({
   subtext,
   icon: Icon,
   accentColor = "zinc",
+  href,
 }: StatCardProps) {
-  return (
-    <div className="relative overflow-hidden rounded-2xl border border-zinc-800/90 bg-zinc-900/90 p-4 backdrop-blur transition hover:border-zinc-700/80">
+  const content = (
+    <div className={`relative overflow-hidden rounded-2xl border border-zinc-800/90 bg-zinc-900/90 p-4 backdrop-blur transition hover:border-zinc-700/80 ${href ? "hover:bg-zinc-850 group cursor-pointer" : ""}`}>
       <div className="flex items-center justify-between">
-        <p className="text-xs font-medium text-zinc-400">{label}</p>
+        <p className="text-xs font-medium text-zinc-400 group-hover:text-zinc-200 transition-colors">{label}</p>
         {Icon && (
-          <div className={`flex h-7 w-7 items-center justify-center rounded-lg border ${colorStyles[accentColor]}`}>
+          <div className={`flex h-7 w-7 items-center justify-center rounded-lg border ${colorStyles[accentColor]} group-hover:scale-105 transition-transform`}>
             <Icon className="h-3.5 w-3.5" />
           </div>
         )}
       </div>
 
-      <div className="mt-2.5 flex items-baseline gap-1.5">
+      <div className="mt-2.5 flex items-baseline gap-1.5 font-mono">
         <span className="text-2xl font-bold tracking-tight text-zinc-100">
           {value}
         </span>
@@ -54,4 +57,10 @@ export default function StatCard({
       )}
     </div>
   );
+
+  if (href) {
+    return <Link href={href} className="block">{content}</Link>;
+  }
+
+  return content;
 }

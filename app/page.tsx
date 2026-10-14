@@ -125,6 +125,7 @@ export default function Home() {
           }
           icon={Fuel}
           accentColor="emerald"
+          href="/fuel"
         />
 
         <StatCard
@@ -134,6 +135,7 @@ export default function Home() {
           subtext={`Total Spend: ₹${expenses.reduce((s, e) => s + e.amount, 0).toLocaleString()}`}
           icon={Receipt}
           accentColor="purple"
+          href="/expenses"
         />
 
         <StatCard
@@ -143,6 +145,7 @@ export default function Home() {
           subtext={nextTask ? nextTask.title : "All tasks completed"}
           icon={Wrench}
           accentColor="cyan"
+          href="/maintenance"
         />
 
         <StatCard
@@ -156,6 +159,7 @@ export default function Home() {
           }
           icon={FileText}
           accentColor="amber"
+          href="/documents"
         />
       </section>
 
