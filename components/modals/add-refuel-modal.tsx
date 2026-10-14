@@ -170,13 +170,20 @@ export default function AddRefuelModal({ isOpen, onClose, onSuccess }: AddRefuel
             </div>
             <div>
               <label className="text-xs font-medium text-zinc-400">Date</label>
-              <input
-                type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-                required
-                className="mt-1.5 w-full rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 focus:border-emerald-500 focus:outline-none"
-              />
+              <div className="relative mt-1.5">
+                <input
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  onClick={(e) => {
+                    try {
+                      e.currentTarget.showPicker?.();
+                    } catch {}
+                  }}
+                  required
+                  className="w-full cursor-pointer rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 [color-scheme:dark] focus:border-emerald-500 focus:outline-none"
+                />
+              </div>
             </div>
           </div>
 

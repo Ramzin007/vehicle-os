@@ -43,6 +43,7 @@ export default function MaintenancePage() {
   const [completingTaskId, setCompletingTaskId] = useState<string | null>(null);
   const [completionOdo, setCompletionOdo] = useState("");
   const [completionCost, setCompletionCost] = useState("");
+  const [completionDate, setCompletionDate] = useState(() => new Date().toISOString().split("T")[0]);
 
   const fetchTasks = useCallback(async () => {
     if (!activeVehicle) return;
@@ -87,7 +88,7 @@ export default function MaintenancePage() {
           id: taskId,
           status: "COMPLETED",
           lastCompletedOdometer: odo,
-          lastCompletedDate: new Date().toISOString(),
+          lastCompletedDate: completionDate ? new Date(completionDate).toISOString() : new Date().toISOString(),
           cost,
         }),
       });
@@ -97,6 +98,7 @@ export default function MaintenancePage() {
         setCompletingTaskId(null);
         setCompletionOdo("");
         setCompletionCost("");
+        setCompletionDate(new Date().toISOString().split("T")[0]);
         await fetchTasks();
         await refreshVehicles();
       }
@@ -432,7 +434,7 @@ export default function MaintenancePage() {
                     <p className="text-xs font-semibold text-emerald-400">
                       Record Completion Details
                     </p>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                       <div>
                         <label className="text-[10px] text-zinc-400 font-mono">Odometer (km)</label>
                         <input
@@ -450,6 +452,20 @@ export default function MaintenancePage() {
                           value={completionCost}
                           onChange={(e) => setCompletionCost(e.target.value)}
                           className="mt-1 w-full rounded-lg border border-zinc-800 bg-zinc-900 px-2.5 py-1.5 text-xs text-zinc-100 focus:outline-none focus:border-zinc-700 font-mono"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-zinc-400 font-mono">Completion Date</label>
+                        <input
+                          type="date"
+                          value={completionDate}
+                          onChange={(e) => setCompletionDate(e.target.value)}
+                          onClick={(e) => {
+                            try {
+                              e.currentTarget.showPicker?.();
+                            } catch {}
+                          }}
+                          className="mt-1 w-full cursor-pointer rounded-lg border border-zinc-800 bg-zinc-900 px-2.5 py-1.5 text-xs text-zinc-100 [color-scheme:dark] focus:outline-none focus:border-zinc-700 font-mono"
                         />
                       </div>
                     </div>
