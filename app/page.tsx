@@ -28,39 +28,135 @@ import {
 
 export default function Home() {
   const { activeVehicle, refreshVehicles } = useVehicle();
-  const [fuelLogs, setFuelLogs] = useState<FuelLogItem[]>([]);
-  const [maintenanceTasks, setMaintenanceTasks] = useState<MaintenanceTaskItem[]>([]);
-  const [documents, setDocuments] = useState<VehicleDocumentItem[]>([]);
-  const [expenses, setExpenses] = useState<ExpenseItem[]>([]);
-  const [_loading, setLoading] = useState(true);
+  const [fuelLogs, setFuelLogs] = useState<FuelLogItem[]>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const activeId = localStorage.getItem("vehicleos_active_vehicle_id");
+        const cached = activeId
+          ? sessionStorage.getItem(`vehicleos_cached_fuel_logs_${activeId}`) || sessionStorage.getItem("vehicleos_cached_fuel_logs")
+          : sessionStorage.getItem("vehicleos_cached_fuel_logs");
+        if (cached) return JSON.parse(cached);
+      } catch {}
+    }
+    return [];
+  });
+
+  const [maintenanceTasks, setMaintenanceTasks] = useState<MaintenanceTaskItem[]>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const activeId = localStorage.getItem("vehicleos_active_vehicle_id");
+        const cached = activeId
+          ? sessionStorage.getItem(`vehicleos_cached_tasks_${activeId}`) || sessionStorage.getItem("vehicleos_cached_tasks")
+          : sessionStorage.getItem("vehicleos_cached_tasks");
+        if (cached) return JSON.parse(cached);
+      } catch {}
+    }
+    return [];
+  });
+
+  const [documents, setDocuments] = useState<VehicleDocumentItem[]>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const activeId = localStorage.getItem("vehicleos_active_vehicle_id");
+        const cached = activeId
+          ? sessionStorage.getItem(`vehicleos_cached_documents_${activeId}`) || sessionStorage.getItem("vehicleos_cached_documents")
+          : sessionStorage.getItem("vehicleos_cached_documents");
+        if (cached) return JSON.parse(cached);
+      } catch {}
+    }
+    return [];
+  });
+
+  const [expenses, setExpenses] = useState<ExpenseItem[]>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const activeId = localStorage.getItem("vehicleos_active_vehicle_id");
+        const cached = activeId
+          ? sessionStorage.getItem(`vehicleos_cached_expenses_${activeId}`) || sessionStorage.getItem("vehicleos_cached_expenses")
+          : sessionStorage.getItem("vehicleos_cached_expenses");
+        if (cached) return JSON.parse(cached);
+      } catch {}
+    }
+    return [];
+  });
+
+  const [loading, setLoading] = useState(() => maintenanceTasks.length === 0);
+
+  // Instantly hydrate vehicle-scoped cache when activeVehicle changes
+  useEffect(() => {
+    if (!activeVehicle) return;
+    try {
+      const cachedTasks = sessionStorage.getItem(`vehicleos_cached_tasks_${activeVehicle.id}`);
+      const cachedFuel = sessionStorage.getItem(`vehicleos_cached_fuel_logs_${activeVehicle.id}`);
+      const cachedDocs = sessionStorage.getItem(`vehicleos_cached_documents_${activeVehicle.id}`);
+      const cachedExp = sessionStorage.getItem(`vehicleos_cached_expenses_${activeVehicle.id}`);
+
+      if (cachedTasks) setMaintenanceTasks(JSON.parse(cachedTasks));
+      if (cachedFuel) setFuelLogs(JSON.parse(cachedFuel));
+      if (cachedDocs) setDocuments(JSON.parse(cachedDocs));
+      if (cachedExp) setExpenses(JSON.parse(cachedExp));
+    } catch {}
+  }, [activeVehicle]);
 
   const loadData = useCallback(async () => {
     if (!activeVehicle) return;
-    setLoading(true);
-    try {
-      const [fuelRes, maintRes, docRes, expRes] = await Promise.all([
-        fetch(`/api/fuel?vehicleId=${activeVehicle.id}`),
-        fetch(`/api/maintenance?vehicleId=${activeVehicle.id}`),
-        fetch(`/api/documents?vehicleId=${activeVehicle.id}`),
-        fetch(`/api/expenses?vehicleId=${activeVehicle.id}`),
-      ]);
 
-      const [fuelData, maintData, docData, expData] = await Promise.all([
-        fuelRes.json(),
-        maintRes.json(),
-        docRes.json(),
-        expRes.json(),
-      ]);
+    // Fetch maintenance tasks independently with 0-delay UI update
+    fetch(`/api/maintenance?vehicleId=${activeVehicle.id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.tasks)) {
+          setMaintenanceTasks(data.tasks);
+          try {
+            sessionStorage.setItem(`vehicleos_cached_tasks_${activeVehicle.id}`, JSON.stringify(data.tasks));
+            sessionStorage.setItem("vehicleos_cached_tasks", JSON.stringify(data.tasks));
+          } catch {}
+        }
+      })
+      .catch((e) => console.error("Maintenance fetch error:", e))
+      .finally(() => setLoading(false));
 
-      if (fuelData.success) setFuelLogs(fuelData.logs || []);
-      if (maintData.success) setMaintenanceTasks(maintData.tasks || []);
-      if (docData.success) setDocuments(docData.documents || []);
-      if (expData.success) setExpenses(expData.expenses || []);
-    } catch (e) {
-      console.error("Failed to load dashboard data:", e);
-    } finally {
-      setLoading(false);
-    }
+    // Fetch fuel telemetry in parallel
+    fetch(`/api/fuel?vehicleId=${activeVehicle.id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.logs)) {
+          setFuelLogs(data.logs);
+          try {
+            sessionStorage.setItem(`vehicleos_cached_fuel_logs_${activeVehicle.id}`, JSON.stringify(data.logs));
+            sessionStorage.setItem("vehicleos_cached_fuel_logs", JSON.stringify(data.logs));
+          } catch {}
+        }
+      })
+      .catch((e) => console.error("Fuel fetch error:", e));
+
+    // Fetch documents in parallel
+    fetch(`/api/documents?vehicleId=${activeVehicle.id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.documents)) {
+          setDocuments(data.documents);
+          try {
+            sessionStorage.setItem(`vehicleos_cached_documents_${activeVehicle.id}`, JSON.stringify(data.documents));
+            sessionStorage.setItem("vehicleos_cached_documents", JSON.stringify(data.documents));
+          } catch {}
+        }
+      })
+      .catch((e) => console.error("Documents fetch error:", e));
+
+    // Fetch expenses in parallel
+    fetch(`/api/expenses?vehicleId=${activeVehicle.id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.expenses)) {
+          setExpenses(data.expenses);
+          try {
+            sessionStorage.setItem(`vehicleos_cached_expenses_${activeVehicle.id}`, JSON.stringify(data.expenses));
+            sessionStorage.setItem("vehicleos_cached_expenses", JSON.stringify(data.expenses));
+          } catch {}
+        }
+      })
+      .catch((e) => console.error("Expenses fetch error:", e));
   }, [activeVehicle]);
 
   useEffect(() => {
@@ -108,6 +204,8 @@ export default function Home() {
       : nextTask.dueDate
       ? new Date(nextTask.dueDate).toLocaleDateString(undefined, { month: "short", day: "numeric" })
       : "Scheduled"
+    : loading && maintenanceTasks.length === 0
+    ? "--"
     : "All Done";
 
   return (
@@ -142,7 +240,7 @@ export default function Home() {
           label="Next Service"
           value={nextTaskDueText}
           unit={nextTask?.dueOdometer ? "left" : ""}
-          subtext={nextTask ? nextTask.title : "All tasks completed"}
+          subtext={nextTask ? nextTask.title : loading && maintenanceTasks.length === 0 ? "Checking schedule..." : "All tasks completed"}
           icon={Wrench}
           accentColor="cyan"
           href="/maintenance"
