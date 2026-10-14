@@ -362,31 +362,12 @@ export default function MaintenancePage() {
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-1.5 shrink-0">
-                      {task.cost && task.cost > 0 ? (
-                        <span className="flex items-center gap-1 rounded-xl bg-amber-500/10 border border-amber-500/25 px-2.5 py-1 text-xs font-bold text-amber-300 font-mono">
-                          <Coins className="h-3.5 w-3.5 text-amber-400" />
-                          ₹{task.cost.toLocaleString()}
-                        </span>
-                      ) : null}
-
-                      <div className="flex items-center gap-0.5">
-                        <button
-                          onClick={() => setEditingTask(task)}
-                          className="text-zinc-500 hover:text-cyan-400 p-1.5 rounded-lg opacity-100 sm:opacity-0 sm:group-hover:opacity-100 hover:bg-cyan-500/10 transition"
-                          title="Edit task"
-                        >
-                          <Edit2 className="h-3.5 w-3.5" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(task.id)}
-                          className="text-zinc-500 hover:text-rose-400 p-1.5 rounded-lg opacity-100 sm:opacity-0 sm:group-hover:opacity-100 hover:bg-rose-500/10 transition"
-                          title="Delete task"
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </button>
-                      </div>
-                    </div>
+                    {task.cost && task.cost > 0 ? (
+                      <span className="flex items-center gap-1 rounded-xl bg-amber-500/10 border border-amber-500/25 px-2.5 py-1 text-xs font-bold text-amber-300 font-mono shrink-0">
+                        <Coins className="h-3.5 w-3.5 text-amber-400" />
+                        ₹{task.cost.toLocaleString()}
+                      </span>
+                    ) : null}
                   </div>
 
                   {/* Due Metrics Chips */}
@@ -498,19 +479,35 @@ export default function MaintenancePage() {
                     )}
                   </div>
 
-                  {!isCompleted && (
+                  <div className="flex items-center gap-1.5 shrink-0">
                     <button
-                      onClick={() => {
-                        setCompletingTaskId(completingTaskId === task.id ? null : task.id);
-                        setCompletionOdo(String(currentOdometer));
-                        setCompletionCost(task.cost ? String(task.cost) : "");
-                      }}
-                      className="flex items-center gap-1.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 px-3.5 py-1.5 text-xs font-semibold text-emerald-400 hover:bg-emerald-500/25 transition shadow-sm"
+                      onClick={() => setEditingTask(task)}
+                      className="flex items-center justify-center h-8 w-8 rounded-xl border border-zinc-800 bg-zinc-950/70 text-zinc-400 hover:text-cyan-400 hover:border-cyan-500/40 hover:bg-cyan-500/10 transition"
+                      title="Edit task"
                     >
-                      <Check className="h-3.5 w-3.5" />
-                      Done
+                      <Edit2 className="h-3.5 w-3.5" />
                     </button>
-                  )}
+                    <button
+                      onClick={() => handleDelete(task.id)}
+                      className="flex items-center justify-center h-8 w-8 rounded-xl border border-zinc-800 bg-zinc-950/70 text-zinc-400 hover:text-rose-400 hover:border-rose-500/40 hover:bg-rose-500/10 transition"
+                      title="Delete task"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                    {!isCompleted && (
+                      <button
+                        onClick={() => {
+                          setCompletingTaskId(completingTaskId === task.id ? null : task.id);
+                          setCompletionOdo(String(currentOdometer));
+                          setCompletionCost(task.cost ? String(task.cost) : "");
+                        }}
+                        className="flex items-center gap-1.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 px-3.5 text-xs font-semibold text-emerald-400 hover:bg-emerald-500/25 transition shadow-sm h-8"
+                      >
+                        <Check className="h-3.5 w-3.5" />
+                        Done
+                      </button>
+                    )}
+                  </div>
                 </div>
 
                 {/* Inline Complete Drawer */}
