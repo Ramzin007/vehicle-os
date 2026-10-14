@@ -8,16 +8,34 @@ export async function GET(req: Request) {
     const vehicleId = searchParams.get("vehicleId");
 
     const where = vehicleId ? { vehicleId } : {};
-    const tasks = await prisma.maintenanceTask.findMany({
-      where,
-      orderBy: [
-        { status: "asc" },
-        { priority: "desc" },
-        { dueDate: "asc" },
-      ],
-    });
+    const [tasks, expenseSum] = await Promise.all([
+      prisma.maintenanceTask.findMany({
+        where,
+        orderBy: [
+          { status: "asc" },
+          { priority: "desc" },
+          { dueDate: "asc" },
+        ],
+      }),
+      prisma.expense.aggregate({
+        where: {
+          ...(vehicleId ? { vehicleId } : {}),
+          category: { in: ["SERVICE", "PARTS"] },
+        },
+        _sum: { amount: true },
+      }),
+    ]);
 
-    return NextResponse.json({ success: true, tasks });
+    const totalServiceSpend = expenseSum._sum.amount || 0;
+
+    return NextResponse.json(
+      { success: true, tasks, totalServiceSpend },
+      {
+        headers: {
+          "Cache-Control": "private, no-cache, no-transform",
+        },
+      }
+    );
   } catch (error) {
     console.error("Maintenance GET error:", error);
     return NextResponse.json({ success: false, error: String(error) }, { status: 500 });

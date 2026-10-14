@@ -40,13 +40,27 @@ export default function MaintenancePage() {
   const [tasks, setTasks] = useState<MaintenanceTask[]>(() => {
     if (typeof window !== "undefined") {
       try {
-        const cached = sessionStorage.getItem("vehicleos_cached_tasks");
+        const activeId = localStorage.getItem("vehicleos_active_vehicle_id");
+        const cached = activeId
+          ? sessionStorage.getItem(`vehicleos_cached_tasks_${activeId}`) || sessionStorage.getItem("vehicleos_cached_tasks")
+          : sessionStorage.getItem("vehicleos_cached_tasks");
         if (cached) return JSON.parse(cached);
       } catch {}
     }
     return [];
   });
-  const [serviceExpenseTotal, setServiceExpenseTotal] = useState<number>(0);
+  const [serviceExpenseTotal, setServiceExpenseTotal] = useState<number>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const activeId = localStorage.getItem("vehicleos_active_vehicle_id");
+        const cached = activeId
+          ? sessionStorage.getItem(`vehicleos_cached_service_spend_${activeId}`) || sessionStorage.getItem("vehicleos_cached_service_spend")
+          : sessionStorage.getItem("vehicleos_cached_service_spend");
+        if (cached !== null) return Number(cached);
+      } catch {}
+    }
+    return 0;
+  });
   const [loading, setLoading] = useState(() => tasks.length === 0);
   const [activeTab, setActiveTab] = useState<"ACTIVE" | "COMPLETED" | "ALL">("ACTIVE");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -56,37 +70,45 @@ export default function MaintenancePage() {
   const [completionCost, setCompletionCost] = useState("");
   const [completionDate, setCompletionDate] = useState(() => new Date().toISOString().split("T")[0]);
 
+  // When activeVehicle changes, instantly load its cached tasks and spend
+  useEffect(() => {
+    if (!activeVehicle) return;
+    try {
+      const cachedTasks = sessionStorage.getItem(`vehicleos_cached_tasks_${activeVehicle.id}`);
+      const cachedSpend = sessionStorage.getItem(`vehicleos_cached_service_spend_${activeVehicle.id}`);
+      if (cachedTasks) setTasks(JSON.parse(cachedTasks));
+      if (cachedSpend !== null) setServiceExpenseTotal(Number(cachedSpend));
+    } catch {}
+  }, [activeVehicle]);
+
   const fetchTasks = useCallback(async () => {
     if (!activeVehicle) return;
 
-    // Fetch maintenance tasks with immediate render upon arrival
+    // Single unified API fetch for tasks and service spend aggregate
     fetch(`/api/maintenance?vehicleId=${activeVehicle.id}`)
       .then((res) => res.json())
       .then((maintData) => {
-        if (maintData.success && Array.isArray(maintData.tasks)) {
-          setTasks(maintData.tasks);
+        if (maintData.success) {
+          if (Array.isArray(maintData.tasks)) {
+            setTasks(maintData.tasks);
+          }
+          if (typeof maintData.totalServiceSpend === "number") {
+            setServiceExpenseTotal(maintData.totalServiceSpend);
+          }
           if (typeof window !== "undefined") {
             try {
-              sessionStorage.setItem("vehicleos_cached_tasks", JSON.stringify(maintData.tasks));
+              sessionStorage.setItem(`vehicleos_cached_tasks_${activeVehicle.id}`, JSON.stringify(maintData.tasks || []));
+              sessionStorage.setItem("vehicleos_cached_tasks", JSON.stringify(maintData.tasks || []));
+              if (typeof maintData.totalServiceSpend === "number") {
+                sessionStorage.setItem(`vehicleos_cached_service_spend_${activeVehicle.id}`, String(maintData.totalServiceSpend));
+                sessionStorage.setItem("vehicleos_cached_service_spend", String(maintData.totalServiceSpend));
+              }
             } catch {}
           }
         }
       })
       .catch((e) => console.error(e))
       .finally(() => setLoading(false));
-
-    // Fetch expenses in parallel without blocking task card rendering
-    fetch(`/api/expenses?vehicleId=${activeVehicle.id}`)
-      .then((res) => res.json())
-      .then((expData) => {
-        if (expData.success && Array.isArray(expData.expenses)) {
-          const serviceTotal = expData.expenses
-            .filter((e: { category: string; amount: number }) => e.category === "SERVICE" || e.category === "PARTS")
-            .reduce((acc: number, e: { amount: number }) => acc + (e.amount || 0), 0);
-          setServiceExpenseTotal(serviceTotal);
-        }
-      })
-      .catch((e) => console.error(e));
   }, [activeVehicle]);
 
   useEffect(() => {
