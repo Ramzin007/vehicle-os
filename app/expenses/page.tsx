@@ -42,21 +42,65 @@ const categoryColors: Record<string, string> = {
 
 export default function ExpensesPage() {
   const { activeVehicle } = useVehicle();
-  const [expenses, setExpenses] = useState<Expense[]>([]);
-  const [summary, setSummary] = useState<Summary | null>(null);
-  const [_loading, setLoading] = useState(true);
+  const [expenses, setExpenses] = useState<Expense[]>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const activeId = localStorage.getItem("vehicleos_active_vehicle_id");
+        if (activeId) {
+          const cached = sessionStorage.getItem(`vehicleos_cached_expenses_${activeId}`);
+          if (cached) return JSON.parse(cached);
+        }
+      } catch {}
+    }
+    return [];
+  });
+  const [summary, setSummary] = useState<Summary | null>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const activeId = localStorage.getItem("vehicleos_active_vehicle_id");
+        if (activeId) {
+          const cached = sessionStorage.getItem(`vehicleos_cached_expense_summary_${activeId}`);
+          if (cached) return JSON.parse(cached);
+        }
+      } catch {}
+    }
+    return null;
+  });
+  const [loading, setLoading] = useState(() => expenses.length === 0);
   const [selectedCategory, setSelectedCategory] = useState<string>("ALL");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
+  // When activeVehicle changes, if not matching initial cache, try loading vehicle-specific cache immediately
+  useEffect(() => {
+    if (!activeVehicle) return;
+    try {
+      const cachedExp = sessionStorage.getItem(`vehicleos_cached_expenses_${activeVehicle.id}`);
+      const cachedSum = sessionStorage.getItem(`vehicleos_cached_expense_summary_${activeVehicle.id}`);
+      if (cachedExp) {
+        setExpenses(JSON.parse(cachedExp));
+      }
+      if (cachedSum) {
+        setSummary(JSON.parse(cachedSum));
+      }
+    } catch {}
+  }, [activeVehicle]);
+
   const fetchExpenses = useCallback(async () => {
     if (!activeVehicle) return;
-    setLoading(true);
     try {
       const res = await fetch(`/api/expenses?vehicleId=${activeVehicle.id}`);
       const data = await res.json();
       if (data.success) {
-        setExpenses(data.expenses || []);
-        setSummary(data.summary || null);
+        const newExpenses = data.expenses || [];
+        const newSummary = data.summary || null;
+        setExpenses(newExpenses);
+        setSummary(newSummary);
+        try {
+          sessionStorage.setItem(`vehicleos_cached_expenses_${activeVehicle.id}`, JSON.stringify(newExpenses));
+          if (newSummary) {
+            sessionStorage.setItem(`vehicleos_cached_expense_summary_${activeVehicle.id}`, JSON.stringify(newSummary));
+          }
+        } catch {}
       }
     } catch (e) {
       console.error(e);
@@ -75,6 +119,15 @@ export default function ExpensesPage() {
       const res = await fetch(`/api/expenses?id=${id}`, { method: "DELETE" });
       const data = await res.json();
       if (data.success) {
+        setExpenses((prev) => {
+          const updated = prev.filter((e) => e.id !== id);
+          if (activeVehicle) {
+            try {
+              sessionStorage.setItem(`vehicleos_cached_expenses_${activeVehicle.id}`, JSON.stringify(updated));
+            } catch {}
+          }
+          return updated;
+        });
         await fetchExpenses();
       }
     } catch (e) {
@@ -116,56 +169,69 @@ export default function ExpensesPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left Column: Analytics Banner & Category Breakdown (lg: 5 cols) */}
         <div className="flex flex-col gap-6 lg:col-span-5">
-          <div className="rounded-3xl border border-zinc-800 bg-gradient-to-br from-zinc-900 via-zinc-900 to-zinc-950 p-6">
-            <p className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
-              Total Vehicle Investment
-            </p>
-            <div className="mt-2 flex items-baseline gap-2 font-mono">
-              <span className="text-5xl font-extrabold tracking-tight text-zinc-100 tabular-nums">
-                ₹{summary?.totalSpend.toLocaleString() ?? 0}
-              </span>
-              {summary && summary.costPerKm > 0 && (
-                <span className="text-xs text-purple-400 font-bold tabular-nums">
-                  (₹{summary.costPerKm}/km)
+          {loading && !summary ? (
+            <div className="rounded-3xl border border-zinc-800 bg-zinc-900/60 p-6 animate-pulse">
+              <div className="h-3 w-32 bg-zinc-800 rounded mb-3" />
+              <div className="h-10 w-44 bg-zinc-800 rounded mb-6" />
+              <div className="h-3 w-full bg-zinc-800/60 rounded-full mb-4" />
+              <div className="flex gap-2">
+                <div className="h-7 w-20 bg-zinc-800/80 rounded-xl" />
+                <div className="h-7 w-24 bg-zinc-800/80 rounded-xl" />
+                <div className="h-7 w-20 bg-zinc-800/80 rounded-xl" />
+              </div>
+            </div>
+          ) : (
+            <div className="rounded-3xl border border-zinc-800 bg-gradient-to-br from-zinc-900 via-zinc-900 to-zinc-950 p-6">
+              <p className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
+                Total Vehicle Investment
+              </p>
+              <div className="mt-2 flex items-baseline gap-2 font-mono">
+                <span className="text-5xl font-extrabold tracking-tight text-zinc-100 tabular-nums">
+                  ₹{summary?.totalSpend.toLocaleString() ?? 0}
                 </span>
+                {summary && summary.costPerKm > 0 && (
+                  <span className="text-xs text-purple-400 font-bold tabular-nums">
+                    (₹{summary.costPerKm}/km)
+                  </span>
+                )}
+              </div>
+
+              {/* Visual Category Proportion Bar */}
+              {summary && summary.categoryBreakdown.length > 0 && (
+                <div className="mt-6 border-t border-zinc-800/80 pt-5">
+                  <div className="flex h-3 w-full overflow-hidden rounded-full bg-zinc-800">
+                    {summary.categoryBreakdown.map((cat) => (
+                      <div
+                        key={cat.category}
+                        style={{
+                          width: `${cat.percentage}%`,
+                          backgroundColor: categoryColors[cat.category] || "#71717a",
+                        }}
+                        title={`${cat.category}: ${cat.percentage}%`}
+                      />
+                    ))}
+                  </div>
+
+                  {/* Category Legend Chips */}
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {summary.categoryBreakdown.map((cat) => (
+                      <div
+                        key={cat.category}
+                        className="flex items-center gap-2 rounded-xl bg-zinc-950/70 px-3 py-1.5 text-xs border border-zinc-800/80"
+                      >
+                        <span
+                          className="h-2 w-2 rounded-full shrink-0"
+                          style={{ backgroundColor: categoryColors[cat.category] || "#71717a" }}
+                        />
+                        <span className="text-zinc-300 font-medium">{cat.category}</span>
+                        <span className="text-zinc-500 font-mono">₹{cat.amount.toLocaleString()}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               )}
             </div>
-
-            {/* Visual Category Proportion Bar */}
-            {summary && summary.categoryBreakdown.length > 0 && (
-              <div className="mt-6 border-t border-zinc-800/80 pt-5">
-                <div className="flex h-3 w-full overflow-hidden rounded-full bg-zinc-800">
-                  {summary.categoryBreakdown.map((cat) => (
-                    <div
-                      key={cat.category}
-                      style={{
-                        width: `${cat.percentage}%`,
-                        backgroundColor: categoryColors[cat.category] || "#71717a",
-                      }}
-                      title={`${cat.category}: ${cat.percentage}%`}
-                    />
-                  ))}
-                </div>
-
-                {/* Category Legend Chips */}
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {summary.categoryBreakdown.map((cat) => (
-                    <div
-                      key={cat.category}
-                      className="flex items-center gap-2 rounded-xl bg-zinc-950/70 px-3 py-1.5 text-xs border border-zinc-800/80"
-                    >
-                      <span
-                        className="h-2 w-2 rounded-full shrink-0"
-                        style={{ backgroundColor: categoryColors[cat.category] || "#71717a" }}
-                      />
-                      <span className="text-zinc-300 font-medium">{cat.category}</span>
-                      <span className="text-zinc-500 font-mono">₹{cat.amount.toLocaleString()}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
+          )}
 
           {/* Monthly Spending Cadence Bar Chart */}
           {summary && summary.monthlyBreakdown.length > 0 && (
@@ -203,7 +269,25 @@ export default function ExpensesPage() {
               <span className="text-[11px] text-zinc-500 font-mono">Chronological</span>
             </div>
 
-            {filteredExpenses.length === 0 ? (
+            {loading && expenses.length === 0 ? (
+              <div className="flex flex-col gap-2.5">
+                {[1, 2, 3, 4].map((i) => (
+                  <div
+                    key={i}
+                    className="flex items-center justify-between rounded-2xl border border-zinc-800/80 bg-zinc-900/60 p-4 animate-pulse"
+                  >
+                    <div className="flex items-center gap-3.5">
+                      <div className="h-10 w-10 rounded-xl bg-zinc-800 shrink-0" />
+                      <div className="flex flex-col gap-2">
+                        <div className="h-4 w-32 bg-zinc-800 rounded" />
+                        <div className="h-3 w-24 bg-zinc-800/60 rounded" />
+                      </div>
+                    </div>
+                    <div className="h-4 w-16 bg-zinc-800 rounded" />
+                  </div>
+                ))}
+              </div>
+            ) : filteredExpenses.length === 0 ? (
               <div className="rounded-3xl border border-dashed border-zinc-800 p-8 text-center bg-zinc-900/40">
                 <Coins className="mx-auto h-8 w-8 text-zinc-600 mb-2" />
                 <p className="text-sm font-semibold text-zinc-300">No expenses recorded</p>

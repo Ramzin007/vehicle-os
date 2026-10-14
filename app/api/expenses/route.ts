@@ -9,27 +9,37 @@ export async function GET(req: Request) {
     const vehicleId = searchParams.get("vehicleId");
 
     const where = vehicleId ? { vehicleId } : {};
-    const expenses = await prisma.expense.findMany({
-      where,
-      orderBy: { date: "desc" },
-      include: {
-        vehicle: {
-          select: { name: true, model: true, currentOdometer: true },
-        },
-      },
-    });
 
-    const vehicle = vehicleId
-      ? await prisma.vehicle.findUnique({ where: { id: vehicleId } })
-      : await prisma.vehicle.findFirst({ where: { isDefault: true } });
+    const [expenses, vehicle] = await Promise.all([
+      prisma.expense.findMany({
+        where,
+        orderBy: { date: "desc" },
+      }),
+      vehicleId
+        ? prisma.vehicle.findUnique({
+            where: { id: vehicleId },
+            select: { currentOdometer: true },
+          })
+        : prisma.vehicle.findFirst({
+            where: { isDefault: true },
+            select: { currentOdometer: true },
+          }),
+    ]);
 
     const summary = calculateExpenseSummary(expenses, vehicle?.currentOdometer ?? 0);
 
-    return NextResponse.json({
-      success: true,
-      expenses,
-      summary,
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        expenses,
+        summary,
+      },
+      {
+        headers: {
+          "Cache-Control": "private, no-cache, no-transform",
+        },
+      }
+    );
   } catch (error) {
     console.error("Expenses GET error:", error);
     return NextResponse.json({ success: false, error: String(error) }, { status: 500 });
