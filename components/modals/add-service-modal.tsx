@@ -256,7 +256,7 @@ export default function AddServiceModal({ isOpen, onClose, onSuccess }: AddServi
               <label className="text-xs font-medium text-zinc-400">Service Center</label>
               <input
                 type="text"
-                placeholder="e.g. TVS Authorized Point"
+                placeholder="e.g. Authorized Service Center"
                 value={serviceCenter}
                 onChange={(e) => setServiceCenter(e.target.value)}
                 className="mt-1.5 w-full rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-600 focus:border-cyan-500 focus:outline-none"
@@ -268,7 +268,7 @@ export default function AddServiceModal({ isOpen, onClose, onSuccess }: AddServi
             <label className="text-xs font-medium text-zinc-400">Notes / Parts Info</label>
             <input
               type="text"
-              placeholder="e.g. TVS Tru4 Synthetic 10W-30 oil, OEM O-ring"
+              placeholder="e.g. Synthetic 10W-40 oil, oil filter change"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               className="mt-1.5 w-full rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-600 focus:border-cyan-500 focus:outline-none"

@@ -156,7 +156,7 @@ export default function FuelPage() {
               <span>Fuel Insights</span>
             </div>
             <p className="leading-relaxed">
-              Consistently filling the tank to full allows VehicleOS to compute high-accuracy trip mileage between fuel stops. Maintain optimal tire pressure (28 front / 32 rear psi for TVS Ronin) to maximize fuel range.
+              Consistently filling the tank to full allows VehicleOS to compute high-accuracy trip mileage between fuel stops. Maintain optimal tire pressure to maximize fuel range.
             </p>
           </div>
         </div>

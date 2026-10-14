@@ -135,7 +135,7 @@ export default function AddVehicleModal({ isOpen, onClose }: AddVehicleModalProp
               <label className="text-xs font-medium text-zinc-400">Vehicle Name</label>
               <input
                 type="text"
-                placeholder="e.g. TVS Ronin / Honda City"
+                placeholder="e.g. Yamaha R15 / Hyundai i20"
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                 required
@@ -146,7 +146,7 @@ export default function AddVehicleModal({ isOpen, onClose }: AddVehicleModalProp
               <label className="text-xs font-medium text-zinc-400">Model / Variant</label>
               <input
                 type="text"
-                placeholder="e.g. 225 / ZX CVT"
+                placeholder="e.g. V4 / Asta"
                 value={form.model}
                 onChange={(e) => setForm({ ...form, model: e.target.value })}
                 required
@@ -160,7 +160,7 @@ export default function AddVehicleModal({ isOpen, onClose }: AddVehicleModalProp
               <label className="text-xs font-medium text-zinc-400">Current Odometer (km)</label>
               <input
                 type="number"
-                placeholder="e.g. 4350"
+                placeholder="e.g. 10000"
                 value={form.currentOdometer}
                 onChange={(e) => setForm({ ...form, currentOdometer: e.target.value })}
                 required
@@ -172,7 +172,7 @@ export default function AddVehicleModal({ isOpen, onClose }: AddVehicleModalProp
               <input
                 type="number"
                 step="0.1"
-                placeholder="e.g. 14.0"
+                placeholder="e.g. 12.0"
                 value={form.tankCapacity}
                 onChange={(e) => setForm({ ...form, tankCapacity: e.target.value })}
                 className="mt-1.5 w-full rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-600 focus:border-emerald-500 focus:outline-none"
@@ -185,7 +185,7 @@ export default function AddVehicleModal({ isOpen, onClose }: AddVehicleModalProp
               <label className="text-xs font-medium text-zinc-400">Registration Number</label>
               <input
                 type="text"
-                placeholder="e.g. KL 10 AV 4242"
+                placeholder="e.g. MH 02 AB 1234"
                 value={form.registrationNumber}
                 onChange={(e) => setForm({ ...form, registrationNumber: e.target.value })}
                 className="mt-1.5 w-full rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-600 focus:border-emerald-500 focus:outline-none"

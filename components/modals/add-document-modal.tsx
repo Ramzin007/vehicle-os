@@ -169,7 +169,7 @@ export default function AddDocumentModal({ isOpen, onClose, onSuccess, initialDa
               <label className="text-xs font-medium text-zinc-400">Document Number</label>
               <input
                 type="text"
-                placeholder="e.g. KL102024..."
+                placeholder="e.g. DOC-12345678"
                 value={documentNumber}
                 onChange={(e) => setDocumentNumber(e.target.value)}
                 className="mt-1.5 w-full rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-600 focus:border-blue-500 focus:outline-none"

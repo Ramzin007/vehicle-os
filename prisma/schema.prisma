@@ -23,17 +23,17 @@ model Vehicle {
   id                 String             @id @default(cuid())
   userId             String
   user               User               @relation(fields: [userId], references: [id], onDelete: Cascade)
-  name               String             // e.g. "TVS Ronin"
-  model              String             // e.g. "225 — Lightning Black"
+  name               String
+  model              String
   type               String             @default("MOTORCYCLE") // MOTORCYCLE, CAR, SCOOTER, OTHER
-  make               String             @default("TVS")
-  year               Int?               @default(2024)
-  registrationNumber String?            @default("KL 10 AV 4242")
+  make               String?
+  year               Int?
+  registrationNumber String?
   vin                String?
-  color              String?            @default("Lightning Black")
+  color              String?
   fuelType           String             @default("PETROL") // PETROL, DIESEL, ELECTRIC, CNG, HYBRID
-  tankCapacity       Float?             @default(14.0) // Liters
-  currentOdometer    Float              @default(4350)
+  tankCapacity       Float?
+  currentOdometer    Float              @default(0)
   isDefault          Boolean            @default(true)
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt

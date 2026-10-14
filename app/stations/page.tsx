@@ -177,7 +177,7 @@ export default function StationsPage() {
           <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
           <input
             type="text"
-            placeholder="Search your city or locality (e.g. Kozhikode, Indiranagar, Kochi)..."
+            placeholder="Search city, area, or locality (e.g. Bandra, Indiranagar, Kochi)..."
             value={searchCity}
             onChange={(e) => setSearchCity(e.target.value)}
             className="w-full rounded-xl border border-zinc-800 bg-zinc-900/90 pl-10 pr-3 py-2 text-xs text-zinc-200 placeholder-zinc-500 focus:border-zinc-700 focus:outline-none"

@@ -237,7 +237,7 @@ export default function MaintenancePage() {
                 : "No tasks found in this view"}
             </p>
             <p className="text-xs text-zinc-400 mt-1 max-w-xs mx-auto">
-              Schedule oil changes, chain lubes, or brake inspections to keep your TVS Ronin running smoothly.
+              Schedule oil changes, tire rotations, or brake inspections to keep your vehicle running smoothly.
             </p>
             <button
               onClick={() => setIsAddModalOpen(true)}

@@ -161,7 +161,7 @@ export default function AddRefuelModal({ isOpen, onClose, onSuccess }: AddRefuel
               <input
                 type="number"
                 step="0.1"
-                placeholder="e.g. 4350"
+                placeholder="e.g. 10500"
                 value={odometer}
                 onChange={(e) => setOdometer(e.target.value)}
                 required
@@ -277,7 +277,7 @@ export default function AddRefuelModal({ isOpen, onClose, onSuccess }: AddRefuel
             <label className="text-xs font-medium text-zinc-400">Fuel Station / Brand</label>
             <input
               type="text"
-              placeholder="e.g. IndianOil Swaraj"
+              placeholder="e.g. Shell, IndianOil, BPCL"
               value={stationName}
               onChange={(e) => setStationName(e.target.value)}
               className="mt-1.5 w-full rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-600 focus:border-emerald-500 focus:outline-none"
@@ -300,7 +300,7 @@ export default function AddRefuelModal({ isOpen, onClose, onSuccess }: AddRefuel
             <label className="text-xs font-medium text-zinc-400">Notes (Optional)</label>
             <input
               type="text"
-              placeholder="e.g. Highway cruise, Rain mode, Premium XP95"
+              placeholder="e.g. Highway cruise, premium fuel"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               className="mt-1.5 w-full rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-600 focus:border-emerald-500 focus:outline-none"

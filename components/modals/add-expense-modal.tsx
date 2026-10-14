@@ -173,7 +173,7 @@ export default function AddExpenseModal({ isOpen, onClose, onSuccess }: AddExpen
               <label className="text-xs font-medium text-zinc-400">Odometer (Optional)</label>
               <input
                 type="number"
-                placeholder="e.g. 4350"
+                placeholder="e.g. 10000"
                 value={odometer}
                 onChange={(e) => setOdometer(e.target.value)}
                 className="mt-1.5 w-full rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-600 focus:border-purple-500 focus:outline-none"
