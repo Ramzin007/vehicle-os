@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { X, Bike, Car, Loader2 } from "lucide-react";
+import { X, Bike, Car, Loader2, ChevronDown } from "lucide-react";
 import { useVehicle } from "@/components/context/vehicle-context";
 
 interface AddVehicleModalProps {
@@ -9,16 +9,67 @@ interface AddVehicleModalProps {
   onClose: () => void;
 }
 
+const MOTORCYCLE_BRANDS = [
+  "Royal Enfield",
+  "Yamaha",
+  "TVS",
+  "Honda",
+  "Hero",
+  "Bajaj",
+  "KTM",
+  "Suzuki",
+  "Kawasaki",
+  "Triumph",
+  "BMW Motorrad",
+  "Ather",
+  "Ola Electric",
+  "Jawa / Yezdi",
+  "Aprilia",
+  "Ducati",
+  "Harley-Davidson",
+  "Ultraviolette",
+  "Revolt",
+  "Husqvarna",
+  "Benelli",
+  "Vespa",
+];
+
+const CAR_BRANDS = [
+  "Maruti Suzuki",
+  "Hyundai",
+  "Tata Motors",
+  "Mahindra",
+  "Toyota",
+  "Kia",
+  "Honda",
+  "Volkswagen",
+  "Skoda",
+  "MG Motor",
+  "BMW",
+  "Mercedes-Benz",
+  "Audi",
+  "Renault",
+  "Nissan",
+  "Ford",
+  "Jeep",
+  "Volvo",
+  "BYD",
+  "Tesla",
+  "Porsche",
+  "Land Rover",
+];
+
 export default function AddVehicleModal({ isOpen, onClose }: AddVehicleModalProps) {
   const { refreshVehicles, setActiveVehicleId } = useVehicle();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const [selectedBrand, setSelectedBrand] = useState("");
+  const [customBrand, setCustomBrand] = useState("");
+
   const [form, setForm] = useState({
-    name: "",
     model: "",
     type: "MOTORCYCLE",
-    make: "",
     year: new Date().getFullYear(),
     registrationNumber: "",
     fuelType: "PETROL",
@@ -29,10 +80,30 @@ export default function AddVehicleModal({ isOpen, onClose }: AddVehicleModalProp
 
   if (!isOpen) return null;
 
+  const currentBrands = form.type === "MOTORCYCLE" ? MOTORCYCLE_BRANDS : CAR_BRANDS;
+
+  const handleTypeChange = (newType: "MOTORCYCLE" | "CAR") => {
+    setForm((prev) => ({ ...prev, type: newType }));
+    if (selectedBrand !== "OTHER") {
+      const allowedList = newType === "MOTORCYCLE" ? MOTORCYCLE_BRANDS : CAR_BRANDS;
+      if (!allowedList.includes(selectedBrand)) {
+        setSelectedBrand("");
+      }
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.name || !form.model) {
-      setError("Please provide vehicle name and model");
+
+    const brandName = selectedBrand === "OTHER" ? customBrand.trim() : selectedBrand.trim();
+
+    if (!brandName) {
+      setError("Please select or enter a vehicle brand");
+      return;
+    }
+
+    if (!form.model.trim()) {
+      setError("Please enter the vehicle model / variant");
       return;
     }
 
@@ -44,16 +115,16 @@ export default function AddVehicleModal({ isOpen, onClose }: AddVehicleModalProp
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: form.name,
-          model: form.model,
+          name: brandName,
+          model: form.model.trim(),
           type: form.type,
-          make: form.make || form.name.split(" ")[0] || "Generic",
+          make: brandName,
           year: form.year ? Number(form.year) : undefined,
-          registrationNumber: form.registrationNumber || undefined,
+          registrationNumber: form.registrationNumber.trim() || undefined,
           fuelType: form.fuelType,
           tankCapacity: form.tankCapacity ? Number(form.tankCapacity) : undefined,
           currentOdometer: Number(form.currentOdometer || 0),
-          color: form.color || undefined,
+          color: form.color.trim() || undefined,
           isDefault: true,
         }),
       });
@@ -77,8 +148,8 @@ export default function AddVehicleModal({ isOpen, onClose }: AddVehicleModalProp
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="w-full max-w-lg rounded-t-3xl sm:rounded-3xl border border-zinc-800 bg-zinc-900 p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="w-full max-w-lg rounded-t-3xl sm:rounded-3xl border border-zinc-800 bg-zinc-900 p-5 sm:p-6 pb-[calc(1.5rem+env(safe-area-inset-bottom))] shadow-2xl max-h-[88dvh] sm:max-h-[90vh] overflow-y-auto overscroll-contain">
         <div className="flex items-center justify-between pb-4 border-b border-zinc-800">
           <div>
             <h2 className="text-lg font-bold text-zinc-100">Add New Vehicle</h2>
@@ -105,7 +176,7 @@ export default function AddVehicleModal({ isOpen, onClose }: AddVehicleModalProp
             <div className="grid grid-cols-2 gap-2 mt-1.5">
               <button
                 type="button"
-                onClick={() => setForm({ ...form, type: "MOTORCYCLE" })}
+                onClick={() => handleTypeChange("MOTORCYCLE")}
                 className={`flex items-center justify-center gap-2 rounded-xl border py-2.5 text-xs font-medium transition ${
                   form.type === "MOTORCYCLE"
                     ? "border-emerald-500 bg-emerald-500/15 text-emerald-300"
@@ -117,7 +188,7 @@ export default function AddVehicleModal({ isOpen, onClose }: AddVehicleModalProp
               </button>
               <button
                 type="button"
-                onClick={() => setForm({ ...form, type: "CAR" })}
+                onClick={() => handleTypeChange("CAR")}
                 className={`flex items-center justify-center gap-2 rounded-xl border py-2.5 text-xs font-medium transition ${
                   form.type === "CAR"
                     ? "border-cyan-500 bg-cyan-500/15 text-cyan-300"
@@ -130,23 +201,37 @@ export default function AddVehicleModal({ isOpen, onClose }: AddVehicleModalProp
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          {/* Brand & Model Selector */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="text-xs font-medium text-zinc-400">Vehicle Name</label>
-              <input
-                type="text"
-                placeholder="e.g. Yamaha R15 / Hyundai i20"
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-                required
-                className="mt-1.5 w-full rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-600 focus:border-emerald-500 focus:outline-none"
-              />
+              <label className="text-xs font-medium text-zinc-400">Brand</label>
+              <div className="relative mt-1.5">
+                <select
+                  value={selectedBrand}
+                  onChange={(e) => {
+                    setSelectedBrand(e.target.value);
+                    if (e.target.value !== "OTHER") {
+                      setCustomBrand("");
+                    }
+                  }}
+                  required
+                  className="w-full appearance-none rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-2 pr-9 text-sm text-zinc-100 focus:border-emerald-500 focus:outline-none"
+                >
+                  <option value="" disabled>Select brand</option>
+                  {currentBrands.map((b) => (
+                    <option key={b} value={b}>{b}</option>
+                  ))}
+                  <option value="OTHER">Other (Specify)</option>
+                </select>
+                <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+              </div>
             </div>
+
             <div>
               <label className="text-xs font-medium text-zinc-400">Model / Variant</label>
               <input
                 type="text"
-                placeholder="e.g. V4 / Asta"
+                placeholder={form.type === "MOTORCYCLE" ? "e.g. Hunter 350 / R15 V4" : "e.g. Creta SX / Swift ZXi"}
                 value={form.model}
                 onChange={(e) => setForm({ ...form, model: e.target.value })}
                 required
@@ -154,6 +239,21 @@ export default function AddVehicleModal({ isOpen, onClose }: AddVehicleModalProp
               />
             </div>
           </div>
+
+          {/* Other Brand Input if selected */}
+          {selectedBrand === "OTHER" && (
+            <div>
+              <label className="text-xs font-medium text-zinc-400">Specify Brand Name</label>
+              <input
+                type="text"
+                placeholder={form.type === "MOTORCYCLE" ? "e.g. Benelli, Ultraviolette, etc." : "e.g. Force, Mini, Lexus, etc."}
+                value={customBrand}
+                onChange={(e) => setCustomBrand(e.target.value)}
+                required
+                className="mt-1.5 w-full rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-600 focus:border-emerald-500 focus:outline-none"
+              />
+            </div>
+          )}
 
           <div className="grid grid-cols-2 gap-3">
             <div>
@@ -207,7 +307,8 @@ export default function AddVehicleModal({ isOpen, onClose }: AddVehicleModalProp
             </div>
           </div>
 
-          <div className="mt-2 flex gap-3">
+          {/* Action buttons with generous clearance for mobile nav and gesture bars */}
+          <div className="mt-4 flex gap-3 pt-2 pb-4">
             <button
               type="button"
               onClick={onClose}

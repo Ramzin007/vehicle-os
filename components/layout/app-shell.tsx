@@ -28,7 +28,7 @@ export default function AppShell({ children }: AppShellProps) {
           </div>
 
           {/* Mobile Bottom Navigation (md:hidden, fixed on mobile screens) */}
-          <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
+          <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden">
             <BottomNav />
           </div>
         </div>

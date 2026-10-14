@@ -4,7 +4,7 @@ export const vehicleSchema = z.object({
   name: z.string().min(1, "Vehicle name is required"),
   model: z.string().min(1, "Model is required"),
   type: z.enum(["MOTORCYCLE", "CAR", "SCOOTER", "OTHER"]).default("MOTORCYCLE"),
-  make: z.string().default("TVS"),
+  make: z.string().optional(),
   year: z.coerce.number().int().min(1900).max(2100).optional(),
   registrationNumber: z.string().optional(),
   vin: z.string().optional(),

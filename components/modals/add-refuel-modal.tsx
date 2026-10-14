@@ -126,8 +126,8 @@ export default function AddRefuelModal({ isOpen, onClose, onSuccess }: AddRefuel
   const quickStations = ["IndianOil", "Bharat Petroleum", "HPCL", "Shell", "Nayara"];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="w-full max-w-lg rounded-t-3xl sm:rounded-3xl border border-zinc-800 bg-zinc-900 p-6 shadow-2xl max-h-[92vh] overflow-y-auto">
+    <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="w-full max-w-lg rounded-t-3xl sm:rounded-3xl border border-zinc-800 bg-zinc-900 p-5 sm:p-6 pb-[calc(1.5rem+env(safe-area-inset-bottom))] shadow-2xl max-h-[88dvh] sm:max-h-[92vh] overflow-y-auto overscroll-contain">
         <div className="flex items-center justify-between pb-4 border-b border-zinc-800">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-emerald-500/20 bg-emerald-500/10 text-emerald-400">
@@ -307,7 +307,7 @@ export default function AddRefuelModal({ isOpen, onClose, onSuccess }: AddRefuel
             />
           </div>
 
-          <div className="mt-2 flex gap-3">
+          <div className="mt-4 flex gap-3 pt-2 pb-4">
             <button
               type="button"
               onClick={onClose}

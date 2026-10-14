@@ -337,7 +337,7 @@ export default function MorePage() {
 
       {/* Delete Vehicle Confirmation Modal */}
       {vehicleToDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in">
           <div className="w-full max-w-sm rounded-3xl border border-rose-500/30 bg-zinc-900 p-6 shadow-2xl">
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-rose-500/10 text-rose-400 mb-4 border border-rose-500/20">
               <AlertTriangle className="h-6 w-6" />
