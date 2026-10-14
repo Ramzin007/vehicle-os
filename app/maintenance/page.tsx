@@ -14,6 +14,7 @@ import {
   Check,
   RotateCw,
   Coins,
+  MapPin,
 } from "lucide-react";
 
 interface MaintenanceTask {
@@ -285,7 +286,7 @@ export default function MaintenancePage() {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
             {filteredTasks.map((task) => {
               const isCompleted = task.status === "COMPLETED";
 
@@ -319,162 +320,202 @@ export default function MaintenancePage() {
             return (
               <div
                 key={task.id}
-                className={`group rounded-2xl border p-4 transition ${
+                className={`group rounded-3xl border p-5 transition flex flex-col justify-between h-full ${
                   isOverdue
-                    ? "border-rose-500/30 bg-rose-500/5"
+                    ? "border-rose-500/30 bg-rose-500/5 shadow-lg shadow-rose-950/20"
                     : isDueSoon
-                    ? "border-amber-500/30 bg-amber-500/5"
+                    ? "border-amber-500/30 bg-amber-500/5 shadow-lg shadow-amber-950/20"
                     : isCompleted
-                    ? "border-zinc-800/60 bg-zinc-900/40 opacity-75"
-                    : "border-zinc-800 bg-zinc-900/70 hover:border-zinc-700"
+                    ? "border-zinc-800/60 bg-zinc-900/40 opacity-80"
+                    : "border-zinc-800 bg-zinc-900/70 hover:border-zinc-700 hover:bg-zinc-900 shadow-lg shadow-zinc-950/40"
                 }`}
               >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex-1">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-sm font-bold text-zinc-100">
+                <div className="flex flex-col gap-3">
+                  {/* Card Header: Title & Badges on left, Cost & Action buttons on right */}
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                      <h3 className="text-base font-bold text-zinc-100 tracking-tight leading-snug">
                         {task.title}
-                      </span>
+                      </h3>
+                      <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+                        {isCompleted ? (
+                          <span className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-400">
+                            Completed
+                          </span>
+                        ) : isOverdue ? (
+                          <span className="rounded-full bg-rose-500/10 border border-rose-500/30 px-2.5 py-0.5 text-[10px] font-bold text-rose-400">
+                            Overdue
+                          </span>
+                        ) : isDueSoon ? (
+                          <span className="rounded-full bg-amber-500/10 border border-amber-500/30 px-2.5 py-0.5 text-[10px] font-bold text-amber-400">
+                            Due Soon
+                          </span>
+                        ) : (
+                          <span className="rounded-full bg-zinc-800 border border-zinc-700 px-2.5 py-0.5 text-[10px] text-zinc-400 font-mono">
+                            Scheduled
+                          </span>
+                        )}
 
-                      {/* Status / Urgency pill */}
-                      {isCompleted ? (
-                        <span className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 text-[10px] font-semibold text-emerald-400">
-                          Completed
+                        <span className="rounded-full bg-zinc-800/80 border border-zinc-700/60 px-2 py-0.5 text-[10px] uppercase font-semibold text-zinc-400 font-mono">
+                          {task.category}
                         </span>
-                      ) : isOverdue ? (
-                        <span className="rounded-full bg-rose-500/10 border border-rose-500/30 px-2 py-0.5 text-[10px] font-bold text-rose-400">
-                          Overdue
-                        </span>
-                      ) : isDueSoon ? (
-                        <span className="rounded-full bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 text-[10px] font-bold text-amber-400">
-                          Due Soon
-                        </span>
-                      ) : (
-                        <span className="rounded-full bg-zinc-800 border border-zinc-700 px-2 py-0.5 text-[10px] text-zinc-400 font-mono">
-                          Scheduled
-                        </span>
-                      )}
-
-                      <span className="rounded-full bg-zinc-800/70 border border-zinc-700/50 px-2 py-0.5 text-[10px] uppercase font-semibold text-zinc-400 font-mono">
-                        {task.category}
-                      </span>
+                      </div>
                     </div>
 
-                    {/* Due indicators */}
-                    <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs">
-                      {task.dueOdometer && !isCompleted && (
-                        <span
-                          className={`flex items-center gap-1 font-mono font-medium ${
-                            isOverdue
-                              ? "text-rose-400 font-bold"
-                              : isDueSoon
-                              ? "text-amber-400 font-bold"
-                              : "text-zinc-400"
-                          }`}
-                        >
-                          <Gauge className="h-3.5 w-3.5" />
-                          {kmRemaining !== null && kmRemaining < 0
-                            ? `${Math.abs(kmRemaining)} km overdue (Due: ${task.dueOdometer} km)`
-                            : `Due at ${task.dueOdometer.toLocaleString()} km (${kmRemaining} km left)`}
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      {task.cost && task.cost > 0 ? (
+                        <span className="flex items-center gap-1 rounded-xl bg-amber-500/10 border border-amber-500/25 px-2.5 py-1 text-xs font-bold text-amber-300 font-mono">
+                          <Coins className="h-3.5 w-3.5 text-amber-400" />
+                          ₹{task.cost.toLocaleString()}
                         </span>
-                      )}
+                      ) : null}
 
-                      {task.dueDate && !isCompleted && (
-                        <span
-                          className={`flex items-center gap-1 ${
-                            daysRemaining !== null && daysRemaining < 0
-                              ? "text-rose-400"
-                              : "text-zinc-400"
-                          }`}
+                      <div className="flex items-center gap-0.5">
+                        <button
+                          onClick={() => setEditingTask(task)}
+                          className="text-zinc-500 hover:text-cyan-400 p-1.5 rounded-lg opacity-100 sm:opacity-0 sm:group-hover:opacity-100 hover:bg-cyan-500/10 transition"
+                          title="Edit task"
                         >
-                          <Calendar className="h-3.5 w-3.5" />
+                          <Edit2 className="h-3.5 w-3.5" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(task.id)}
+                          className="text-zinc-500 hover:text-rose-400 p-1.5 rounded-lg opacity-100 sm:opacity-0 sm:group-hover:opacity-100 hover:bg-rose-500/10 transition"
+                          title="Delete task"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Due Metrics Chips */}
+                  <div className="flex flex-wrap items-center gap-2 pt-1 text-xs">
+                    {task.dueOdometer && !isCompleted && (
+                      <span
+                        className={`flex items-center gap-1.5 rounded-xl border px-2.5 py-1 text-xs font-mono font-medium ${
+                          isOverdue
+                            ? "border-rose-500/30 bg-rose-500/10 text-rose-400"
+                            : isDueSoon
+                            ? "border-amber-500/30 bg-amber-500/10 text-amber-400"
+                            : "border-zinc-800 bg-zinc-950/60 text-zinc-300"
+                        }`}
+                      >
+                        <Gauge className="h-3.5 w-3.5 shrink-0" />
+                        <span>
+                          {kmRemaining !== null && kmRemaining < 0
+                            ? `${Math.abs(kmRemaining).toLocaleString()} km overdue`
+                            : `${kmRemaining?.toLocaleString()} km left`}
+                        </span>
+                        <span className="text-zinc-500 text-[11px]">
+                          (@ {task.dueOdometer.toLocaleString()} km)
+                        </span>
+                      </span>
+                    )}
+
+                    {task.dueDate && !isCompleted && (
+                      <span
+                        className={`flex items-center gap-1.5 rounded-xl border px-2.5 py-1 text-xs font-medium ${
+                          daysRemaining !== null && daysRemaining < 0
+                            ? "border-rose-500/30 bg-rose-500/10 text-rose-400"
+                            : isDueSoon
+                            ? "border-amber-500/30 bg-amber-500/10 text-amber-400"
+                            : "border-zinc-800 bg-zinc-950/60 text-zinc-300"
+                        }`}
+                      >
+                        <Calendar className="h-3.5 w-3.5 shrink-0 text-cyan-400" />
+                        <span>
                           {new Date(task.dueDate).toLocaleDateString(undefined, {
                             month: "short",
                             day: "numeric",
-                          })}{" "}
-                          {daysRemaining !== null && (
-                            <span className="text-zinc-500 font-mono">
-                              ({daysRemaining < 0 ? `${Math.abs(daysRemaining)}d late` : `in ${daysRemaining}d`})
-                            </span>
-                          )}
+                          })}
                         </span>
-                      )}
-
-                      {isCompleted && task.lastCompletedDate && (
-                        <span className="flex items-center gap-1 text-zinc-400 text-[11px]">
-                          <CheckCircle2 className="h-3 w-3 text-emerald-400" />
-                          Completed on {new Date(task.lastCompletedDate).toLocaleDateString()}
-                          {task.lastCompletedOdometer ? ` @ ${task.lastCompletedOdometer.toLocaleString()} km` : ""}
-                        </span>
-                      )}
-
-                      {task.intervalKm && (
-                        <span className="flex items-center gap-1 text-[11px] text-zinc-500 font-mono">
-                          <RotateCw className="h-3 w-3" />
-                          Every {task.intervalKm.toLocaleString()} km
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Notes & Service Center */}
-                    {(task.notes || task.serviceCenter) && (
-                      <p className="mt-2 text-xs text-zinc-400">
-                        {task.serviceCenter && (
-                          <strong className="text-zinc-300 mr-1">
-                            {task.serviceCenter}:
-                          </strong>
+                        {daysRemaining !== null && (
+                          <span className="text-zinc-500 font-mono text-[11px]">
+                            ({daysRemaining < 0 ? `${Math.abs(daysRemaining)}d late` : `in ${daysRemaining}d`})
+                          </span>
                         )}
-                        {task.notes}
-                      </p>
+                      </span>
+                    )}
+
+                    {task.intervalKm && (
+                      <span className="flex items-center gap-1 rounded-xl border border-zinc-800 bg-zinc-950/40 px-2.5 py-1 text-[11px] text-zinc-400 font-mono">
+                        <RotateCw className="h-3 w-3 shrink-0 text-zinc-500" />
+                        Every {task.intervalKm.toLocaleString()} km
+                      </span>
+                    )}
+
+                    {task.intervalMonths && (
+                      <span className="flex items-center gap-1 rounded-xl border border-zinc-800 bg-zinc-950/40 px-2.5 py-1 text-[11px] text-zinc-400 font-mono">
+                        <Calendar className="h-3 w-3 shrink-0 text-zinc-500" />
+                        Every {task.intervalMonths} mo
+                      </span>
                     )}
                   </div>
 
-                  {/* Actions */}
-                  <div className="flex flex-col items-end gap-2">
-                    {task.cost && task.cost > 0 ? (
-                      <span className="flex items-center gap-1 text-xs font-semibold text-zinc-300 font-mono">
-                        <Coins className="h-3 w-3 text-amber-400" />
-                        ₹{task.cost.toLocaleString()}
-                      </span>
-                    ) : null}
-
-                    <div className="flex items-center gap-1">
-                      {!isCompleted && (
-                        <button
-                          onClick={() => {
-                            setCompletingTaskId(task.id);
-                            setCompletionOdo(String(currentOdometer));
-                            setCompletionCost(task.cost ? String(task.cost) : "");
-                          }}
-                          className="flex items-center gap-1 rounded-xl bg-emerald-500/10 border border-emerald-500/30 px-3 py-1.5 text-xs font-semibold text-emerald-400 hover:bg-emerald-500/20 transition"
-                        >
-                          <Check className="h-3.5 w-3.5" />
-                          Done
-                        </button>
+                  {/* Notes & Service Center with proper clean badge */}
+                  {(task.notes || task.serviceCenter) && (
+                    <div className="rounded-2xl border border-zinc-800/60 bg-zinc-950/40 p-3 text-xs flex flex-col gap-1">
+                      {task.serviceCenter && (
+                        <div className="flex items-center gap-1.5 text-zinc-300 font-medium">
+                          <MapPin className="h-3.5 w-3.5 text-cyan-400 shrink-0" />
+                          <span className="truncate">{task.serviceCenter}</span>
+                        </div>
                       )}
-
-                      <button
-                        onClick={() => setEditingTask(task)}
-                        className="text-zinc-500 hover:text-cyan-400 p-1.5 rounded-lg opacity-100 sm:opacity-0 sm:group-hover:opacity-100 hover:bg-cyan-500/10 transition"
-                        title="Edit task"
-                      >
-                        <Edit2 className="h-4 w-4" />
-                      </button>
-
-                      <button
-                        onClick={() => handleDelete(task.id)}
-                        className="text-zinc-500 hover:text-rose-400 p-1.5 rounded-lg opacity-100 sm:opacity-0 sm:group-hover:opacity-100 hover:bg-rose-500/10 transition"
-                        title="Delete task"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
+                      {task.notes && (
+                        <p className="text-zinc-400 text-xs leading-relaxed">
+                          {task.notes}
+                        </p>
+                      )}
                     </div>
+                  )}
+                </div>
+
+                {/* Card Bottom Bar: Priority/Completion on left, Done action on right */}
+                <div className="mt-4 pt-3 border-t border-zinc-800/60 flex items-center justify-between gap-3">
+                  <div>
+                    {isCompleted && task.lastCompletedDate ? (
+                      <span className="flex items-center gap-1.5 text-zinc-400 text-xs">
+                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
+                        Completed on {new Date(task.lastCompletedDate).toLocaleDateString()}
+                        {task.lastCompletedOdometer ? ` @ ${task.lastCompletedOdometer.toLocaleString()} km` : ""}
+                      </span>
+                    ) : (
+                      <span className="text-[11px] text-zinc-500 font-medium">
+                        Priority:{" "}
+                        <span
+                          className={
+                            task.priority === "HIGH" || task.priority === "URGENT"
+                              ? "text-rose-400 font-semibold"
+                              : task.priority === "MEDIUM"
+                              ? "text-amber-400 font-medium"
+                              : "text-zinc-400"
+                          }
+                        >
+                          {task.priority}
+                        </span>
+                      </span>
+                    )}
                   </div>
+
+                  {!isCompleted && (
+                    <button
+                      onClick={() => {
+                        setCompletingTaskId(completingTaskId === task.id ? null : task.id);
+                        setCompletionOdo(String(currentOdometer));
+                        setCompletionCost(task.cost ? String(task.cost) : "");
+                      }}
+                      className="flex items-center gap-1.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 px-3.5 py-1.5 text-xs font-semibold text-emerald-400 hover:bg-emerald-500/25 transition shadow-sm"
+                    >
+                      <Check className="h-3.5 w-3.5" />
+                      Done
+                    </button>
+                  )}
                 </div>
 
                 {/* Inline Complete Drawer */}
                 {completingTaskId === task.id && (
-                  <div className="mt-3 rounded-xl border border-emerald-500/30 bg-zinc-950 p-3.5 flex flex-col gap-2.5">
+                  <div className="mt-3 rounded-2xl border border-emerald-500/30 bg-zinc-950 p-3.5 flex flex-col gap-2.5">
                     <p className="text-xs font-semibold text-emerald-400">
                       Record Completion Details
                     </p>
