@@ -105,10 +105,10 @@ export default function DesktopSidebar() {
                   </div>
                   <div className="truncate">
                     <p className="text-sm font-semibold text-zinc-100 truncate">
-                      {activeVehicle.name}
+                      {activeVehicle.model || activeVehicle.name}
                     </p>
                     <p className="text-xs text-zinc-400 truncate font-mono">
-                      {activeVehicle.model}
+                      {activeVehicle.make || activeVehicle.name}
                     </p>
                   </div>
                 </div>
@@ -149,7 +149,10 @@ export default function DesktopSidebar() {
                               ) : (
                                 <Car className="h-4 w-4 text-cyan-400 shrink-0" />
                               )}
-                              <span className="truncate">{v.name}</span>
+                              <div className="truncate">
+                                <p className="font-semibold truncate">{v.model || v.name}</p>
+                                <p className="text-[10px] text-zinc-400 truncate">{v.make || v.name}</p>
+                              </div>
                             </div>
                             {isSelected && <Check className="h-4 w-4 text-emerald-400" />}
                           </button>

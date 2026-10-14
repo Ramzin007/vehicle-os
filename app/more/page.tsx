@@ -119,8 +119,8 @@ export default function MorePage() {
                     )}
                   </div>
                   <div>
-                    <h2 className="text-lg font-bold text-zinc-100">{activeVehicle.name}</h2>
-                    <p className="text-xs text-zinc-400 font-mono">{activeVehicle.model}</p>
+                    <h2 className="text-lg font-bold text-zinc-100">{activeVehicle.model || activeVehicle.name}</h2>
+                    <p className="text-xs text-zinc-400 font-mono">{activeVehicle.make || activeVehicle.name}</p>
                   </div>
                 </div>
 
@@ -208,7 +208,7 @@ export default function MorePage() {
                     )}
                     <div className="min-w-0 flex-1 truncate">
                       <div className="flex items-center gap-2">
-                        <p className="text-xs font-semibold truncate">{v.name}</p>
+                        <p className="text-xs font-semibold truncate">{v.model || v.name}</p>
                         {v.id === activeVehicle?.id && (
                           <span className="rounded-full bg-emerald-500/20 px-2 py-0.5 text-[10px] font-semibold text-emerald-400 font-mono">
                             Active
@@ -216,7 +216,7 @@ export default function MorePage() {
                         )}
                       </div>
                       <p className="text-[11px] text-zinc-400 truncate font-mono">
-                        {v.model} • {v.currentOdometer.toLocaleString()} km
+                        {v.make || v.name} • {v.currentOdometer.toLocaleString()} km
                       </p>
                     </div>
                   </button>

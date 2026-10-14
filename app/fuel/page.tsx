@@ -73,7 +73,7 @@ export default function FuelPage() {
             <span className="truncate">Fuel & Refills</span>
           </h1>
           <p className="text-xs text-zinc-400 mt-1 truncate">
-            {activeVehicle ? `${activeVehicle.name} • ${activeVehicle.model}` : "Fuel economy & refills"}
+            {activeVehicle ? `${activeVehicle.model || activeVehicle.name} • ${activeVehicle.make || activeVehicle.name}` : "Fuel economy & refills"}
           </p>
         </div>
 

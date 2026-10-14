@@ -115,7 +115,7 @@ export default function AddVehicleModal({ isOpen, onClose }: AddVehicleModalProp
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: brandName,
+          name: form.model.trim(),
           model: form.model.trim(),
           type: form.type,
           make: brandName,

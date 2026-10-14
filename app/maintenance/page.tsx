@@ -185,7 +185,7 @@ export default function MaintenancePage() {
             <span className="truncate">Service & Health</span>
           </h1>
           <p className="text-xs text-zinc-400 mt-1 truncate">
-            {activeVehicle ? `${activeVehicle.name} • ${activeVehicle.model}` : "Maintenance tracker"}
+            {activeVehicle ? `${activeVehicle.model || activeVehicle.name} • ${activeVehicle.make || activeVehicle.name}` : "Maintenance tracker"}
           </p>
         </div>
 

@@ -103,7 +103,7 @@ export default function TopBar({ title }: TopBarProps) {
             </h1>
             {activeVehicle && (
               <p className="text-xs text-zinc-400">
-                Active: <span className="text-zinc-200 font-medium">{activeVehicle.name}</span> <span className="text-zinc-500 font-mono">({activeVehicle.model})</span>
+                Active: <span className="text-zinc-200 font-medium">{activeVehicle.model || activeVehicle.name}</span> <span className="text-zinc-500 font-mono">({activeVehicle.make || activeVehicle.name})</span>
               </p>
             )}
           </div>
@@ -142,7 +142,7 @@ export default function TopBar({ title }: TopBarProps) {
                 ) : (
                   <Car className="h-3.5 w-3.5 text-cyan-400 shrink-0" />
                 )}
-                <span className="max-w-[75px] xs:max-w-[100px] truncate">{activeVehicle.name}</span>
+                <span className="max-w-[75px] xs:max-w-[100px] truncate">{activeVehicle.model || activeVehicle.name}</span>
                 <ChevronDown className="h-3.5 w-3.5 text-zinc-400 shrink-0" />
               </button>
 
@@ -181,8 +181,8 @@ export default function TopBar({ title }: TopBarProps) {
                                 <Car className="h-4 w-4 shrink-0 text-cyan-400" />
                               )}
                               <div className="truncate">
-                                <p className="truncate">{v.name}</p>
-                                <p className="text-[11px] text-zinc-500 truncate">{v.model}</p>
+                                <p className="font-semibold truncate">{v.model || v.name}</p>
+                                <p className="text-[11px] text-zinc-500 truncate">{v.make || v.name}</p>
                               </div>
                             </div>
                             {isSelected && <Check className="h-4 w-4 shrink-0 text-emerald-400" />}

@@ -88,8 +88,8 @@ export default function DocumentsPage() {
             </div>
             Vehicle Documents
           </h1>
-          <p className="text-xs text-zinc-400 mt-1">
-            {activeVehicle ? `${activeVehicle.name} • ${activeVehicle.model}` : "Compliance & validity"}
+          <p className="text-xs text-zinc-400 mt-1 truncate">
+            {activeVehicle ? `${activeVehicle.model || activeVehicle.name} • ${activeVehicle.make || activeVehicle.name}` : "Compliance & validity"}
           </p>
         </div>
 

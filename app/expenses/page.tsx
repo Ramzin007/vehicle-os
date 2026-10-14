@@ -152,7 +152,7 @@ export default function ExpensesPage() {
             <span className="truncate">Expenses & Costs</span>
           </h1>
           <p className="text-xs text-zinc-400 mt-1 truncate">
-            {activeVehicle ? `${activeVehicle.name} • ${activeVehicle.model}` : "Cost tracking & categories"}
+            {activeVehicle ? `${activeVehicle.model || activeVehicle.name} • ${activeVehicle.make || activeVehicle.name}` : "Cost tracking & categories"}
           </p>
         </div>
 

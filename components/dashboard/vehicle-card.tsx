@@ -122,10 +122,10 @@ export default function VehicleCard({
       <div className="mt-4 flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-zinc-100 truncate">
-            {activeVehicle.name}
+            {activeVehicle.model || activeVehicle.name}
           </h2>
           <p className="text-xs text-zinc-400 mt-0.5 truncate">
-            {activeVehicle.model} {activeVehicle.year ? `• ${activeVehicle.year}` : ""}
+            {activeVehicle.make || activeVehicle.name} {activeVehicle.year ? `• ${activeVehicle.year}` : ""}
           </p>
         </div>
 
