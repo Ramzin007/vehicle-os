@@ -76,20 +76,20 @@ export default function TopBar({ title }: TopBarProps) {
     <>
       <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-zinc-800 bg-zinc-950/80 px-4 md:px-8 backdrop-blur-md">
         {/* Mobile View: Brand & Title */}
-        <div className="flex md:hidden items-center gap-3">
-          <Link href="/" className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 shadow-lg shadow-emerald-500/20">
+        <div className="flex md:hidden items-center gap-2.5 min-w-0 flex-1 mr-2">
+          <Link href="/" className="flex items-center gap-2.5 min-w-0">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 shadow-lg shadow-emerald-500/20">
               <ShieldCheck className="h-5 w-5 text-zinc-950" />
             </div>
-            <div>
+            <div className="min-w-0">
               <div className="flex items-center gap-1.5">
-                <span className="text-[11px] font-bold uppercase tracking-widest text-emerald-400">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-400">
                   VehicleOS
                 </span>
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
               </div>
-              <h1 className="text-base font-semibold tracking-tight text-zinc-100">
-                {title || (activeVehicle ? activeVehicle.name : "Companion")}
+              <h1 className="text-sm font-semibold tracking-tight text-zinc-100 truncate">
+                {currentTitle}
               </h1>
             </div>
           </Link>
@@ -110,7 +110,7 @@ export default function TopBar({ title }: TopBarProps) {
         </div>
 
         {/* Right Side: Responsive Controls */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           {/* Desktop Quick Action Buttons */}
           <div className="hidden md:flex items-center gap-2">
             <button
@@ -135,15 +135,15 @@ export default function TopBar({ title }: TopBarProps) {
               <button
                 type="button"
                 onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="flex items-center gap-2 rounded-xl border border-zinc-800 bg-zinc-900/90 px-3 py-1.5 text-xs font-medium text-zinc-200 transition hover:border-zinc-700 hover:bg-zinc-850"
+                className="flex items-center gap-1.5 rounded-xl border border-zinc-800 bg-zinc-900/90 px-2.5 py-1.5 text-xs font-medium text-zinc-200 transition hover:border-zinc-700 hover:bg-zinc-850"
               >
                 {activeVehicle.type === "MOTORCYCLE" ? (
-                  <Bike className="h-3.5 w-3.5 text-emerald-400" />
+                  <Bike className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
                 ) : (
-                  <Car className="h-3.5 w-3.5 text-cyan-400" />
+                  <Car className="h-3.5 w-3.5 text-cyan-400 shrink-0" />
                 )}
-                <span className="max-w-[100px] truncate">{activeVehicle.name}</span>
-                <ChevronDown className="h-3.5 w-3.5 text-zinc-400" />
+                <span className="max-w-[75px] xs:max-w-[100px] truncate">{activeVehicle.name}</span>
+                <ChevronDown className="h-3.5 w-3.5 text-zinc-400 shrink-0" />
               </button>
 
               {/* Mobile Dropdown Menu */}

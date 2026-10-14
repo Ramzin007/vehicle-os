@@ -154,69 +154,69 @@ export default function MaintenancePage() {
   return (
     <div className="flex flex-col gap-6 p-4 sm:p-6 lg:p-8">
       {/* Header & Schedule CTA */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-zinc-100 flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-cyan-500/20 bg-cyan-500/10 text-cyan-400">
-              <Wrench className="h-5 w-5" />
+      <div className="flex items-center justify-between gap-3">
+        <div className="min-w-0 flex-1">
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-zinc-100 flex items-center gap-2.5 sm:gap-3 truncate">
+            <div className="flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-xl border border-cyan-500/20 bg-cyan-500/10 text-cyan-400">
+              <Wrench className="h-4 w-4 sm:h-5 sm:w-5" />
             </div>
-            Service & Care
+            <span className="truncate">Service & Health</span>
           </h1>
-          <p className="text-xs text-zinc-400 mt-1">
+          <p className="text-xs text-zinc-400 mt-1 truncate">
             {activeVehicle ? `${activeVehicle.name} • ${activeVehicle.model}` : "Maintenance tracker"}
           </p>
         </div>
 
         <button
           onClick={() => setIsAddModalOpen(true)}
-          className="flex items-center gap-2 rounded-xl bg-cyan-500 px-4 py-2 text-xs font-semibold text-zinc-950 transition hover:bg-cyan-400 shadow-lg shadow-cyan-500/20"
+          className="flex shrink-0 items-center gap-1.5 sm:gap-2 rounded-xl bg-cyan-500 px-3 sm:px-4 py-2 text-xs font-semibold text-zinc-950 transition hover:bg-cyan-400 shadow-lg shadow-cyan-500/20"
         >
           <Plus className="h-4 w-4" />
-          <span>Schedule Service</span>
+          <span><span className="hidden xs:inline">Schedule </span>Service</span>
         </button>
       </div>
 
       {/* Maintenance Health Summary Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-4">
-          <p className="text-[11px] uppercase font-semibold text-zinc-400 tracking-wider">Upcoming Services</p>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3">
+        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-3 sm:p-4">
+          <p className="text-[10px] sm:text-[11px] uppercase font-semibold text-zinc-400 tracking-wider truncate">Upcoming</p>
           <div className="mt-1 flex items-baseline gap-1.5 font-mono">
-            <span className="text-3xl font-bold text-cyan-400 tabular-nums">{pendingCount}</span>
+            <span className="text-2xl sm:text-3xl font-bold text-cyan-400 tabular-nums">{pendingCount}</span>
             <span className="text-xs text-zinc-500">tasks</span>
           </div>
         </div>
 
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-4">
-          <p className="text-[11px] uppercase font-semibold text-zinc-400 tracking-wider">Service History</p>
+        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-3 sm:p-4">
+          <p className="text-[10px] sm:text-[11px] uppercase font-semibold text-zinc-400 tracking-wider truncate">History</p>
           <div className="mt-1 flex items-baseline gap-1.5 font-mono">
-            <span className="text-3xl font-bold text-emerald-400 tabular-nums">{completedCount}</span>
-            <span className="text-xs text-zinc-500">completed</span>
+            <span className="text-2xl sm:text-3xl font-bold text-emerald-400 tabular-nums">{completedCount}</span>
+            <span className="text-xs text-zinc-500">done</span>
           </div>
         </div>
 
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-4">
-          <p className="text-[11px] uppercase font-semibold text-zinc-400 tracking-wider">Total Spent on Care</p>
+        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-3 sm:p-4">
+          <p className="text-[10px] sm:text-[11px] uppercase font-semibold text-zinc-400 tracking-wider truncate">Care Spend</p>
           <div className="mt-1 flex items-baseline gap-1.5 font-mono">
-            <span className="text-3xl font-bold text-zinc-100 tabular-nums">
+            <span className="text-2xl sm:text-3xl font-bold text-zinc-100 tabular-nums">
               ₹{serviceExpenseTotal.toLocaleString()}
             </span>
           </div>
         </div>
 
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-4">
-          <p className="text-[11px] uppercase font-semibold text-zinc-400 tracking-wider">Current Odometer</p>
+        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-3 sm:p-4">
+          <p className="text-[10px] sm:text-[11px] uppercase font-semibold text-zinc-400 tracking-wider truncate">Odometer</p>
           <div className="mt-1 flex items-baseline gap-1.5 font-mono">
-            <span className="text-3xl font-bold text-zinc-100 tabular-nums">{currentOdometer.toLocaleString()}</span>
+            <span className="text-2xl sm:text-3xl font-bold text-zinc-100 tabular-nums">{currentOdometer.toLocaleString()}</span>
             <span className="text-xs text-zinc-500">km</span>
           </div>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="grid grid-cols-3 gap-2 rounded-2xl border border-zinc-800 bg-zinc-900/80 p-1.5">
+      <div className="grid grid-cols-3 gap-1.5 sm:gap-2 rounded-2xl border border-zinc-800 bg-zinc-900/80 p-1 sm:p-1.5 text-center">
         <button
           onClick={() => setActiveTab("ACTIVE")}
-          className={`rounded-xl py-2 text-xs font-semibold transition ${
+          className={`rounded-xl py-2 px-1 text-xs font-semibold transition truncate ${
             activeTab === "ACTIVE"
               ? "bg-cyan-500/15 text-cyan-300 border border-cyan-500/30"
               : "text-zinc-400 hover:text-zinc-200"
@@ -226,7 +226,7 @@ export default function MaintenancePage() {
         </button>
         <button
           onClick={() => setActiveTab("COMPLETED")}
-          className={`rounded-xl py-2 text-xs font-semibold transition ${
+          className={`rounded-xl py-2 px-1 text-xs font-semibold transition truncate ${
             activeTab === "COMPLETED"
               ? "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30"
               : "text-zinc-400 hover:text-zinc-200"
@@ -236,7 +236,7 @@ export default function MaintenancePage() {
         </button>
         <button
           onClick={() => setActiveTab("ALL")}
-          className={`rounded-xl py-2 text-xs font-semibold transition ${
+          className={`rounded-xl py-2 px-1 text-xs font-semibold transition truncate ${
             activeTab === "ALL"
               ? "bg-zinc-800 text-zinc-100 border border-zinc-700"
               : "text-zinc-400 hover:text-zinc-200"
@@ -320,7 +320,7 @@ export default function MaintenancePage() {
             return (
               <div
                 key={task.id}
-                className={`group rounded-3xl border p-5 transition flex flex-col justify-between h-full ${
+                className={`group rounded-3xl border p-4 sm:p-5 transition flex flex-col justify-between h-full ${
                   isOverdue
                     ? "border-rose-500/30 bg-rose-500/5 shadow-lg shadow-rose-950/20"
                     : isDueSoon
@@ -334,7 +334,7 @@ export default function MaintenancePage() {
                   {/* Card Header: Title & Badges on left, Cost & Action buttons on right */}
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
-                      <h3 className="text-base font-bold text-zinc-100 tracking-tight leading-snug">
+                      <h3 className="text-base font-bold text-zinc-100 tracking-tight leading-snug break-words">
                         {task.title}
                       </h3>
                       <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
@@ -453,16 +453,18 @@ export default function MaintenancePage() {
                 </div>
 
                 {/* Card Bottom Bar: Priority/Completion on left, Done action on right */}
-                <div className="mt-4 pt-3 border-t border-zinc-800/60 flex items-center justify-between gap-3">
-                  <div>
+                <div className="mt-4 pt-3 border-t border-zinc-800/60 flex items-center justify-between gap-2">
+                  <div className="min-w-0 flex-1">
                     {isCompleted && task.lastCompletedDate ? (
-                      <span className="flex items-center gap-1.5 text-zinc-400 text-xs">
+                      <span className="flex items-center gap-1.5 text-zinc-400 text-xs truncate">
                         <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
-                        Completed on {new Date(task.lastCompletedDate).toLocaleDateString()}
-                        {task.lastCompletedOdometer ? ` @ ${task.lastCompletedOdometer.toLocaleString()} km` : ""}
+                        <span className="truncate">
+                          Done {new Date(task.lastCompletedDate).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+                          {task.lastCompletedOdometer ? ` @ ${task.lastCompletedOdometer.toLocaleString()} km` : ""}
+                        </span>
                       </span>
                     ) : (
-                      <span className="text-[11px] text-zinc-500 font-medium">
+                      <span className="text-[11px] text-zinc-500 font-medium truncate block">
                         Priority:{" "}
                         <span
                           className={

@@ -64,25 +64,25 @@ export default function FuelPage() {
   return (
     <div className="flex flex-col gap-6 p-4 sm:p-6 lg:p-8">
       {/* Header & Add Refill CTA */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-zinc-100 flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-emerald-500/20 bg-emerald-500/10 text-emerald-400">
-              <Fuel className="h-5 w-5" />
+      <div className="flex items-center justify-between gap-3">
+        <div className="min-w-0 flex-1">
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-zinc-100 flex items-center gap-2.5 sm:gap-3 truncate">
+            <div className="flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-xl border border-emerald-500/20 bg-emerald-500/10 text-emerald-400">
+              <Fuel className="h-4 w-4 sm:h-5 sm:w-5" />
             </div>
-            Fuel & Refills
+            <span className="truncate">Fuel & Refills</span>
           </h1>
-          <p className="text-xs text-zinc-400 mt-1">
+          <p className="text-xs text-zinc-400 mt-1 truncate">
             {activeVehicle ? `${activeVehicle.name} • ${activeVehicle.model}` : "Fuel economy & refills"}
           </p>
         </div>
 
         <button
           onClick={() => setIsAddModalOpen(true)}
-          className="flex items-center gap-2 rounded-xl bg-emerald-500 px-4 py-2 text-xs font-semibold text-zinc-950 transition hover:bg-emerald-400 shadow-lg shadow-emerald-500/20"
+          className="flex shrink-0 items-center gap-1.5 sm:gap-2 rounded-xl bg-emerald-500 px-3 sm:px-4 py-2 text-xs font-semibold text-zinc-950 transition hover:bg-emerald-400 shadow-lg shadow-emerald-500/20"
         >
           <Plus className="h-4 w-4" />
-          <span>Add Refill</span>
+          <span><span className="hidden xs:inline">Add </span>Refill</span>
         </button>
       </div>
 
@@ -91,14 +91,14 @@ export default function FuelPage() {
         {/* Left Column: Metrics & Analysis (lg: 5 cols) */}
         <div className="flex flex-col gap-6 lg:col-span-5">
           {/* Fuel Metrics Hero Banner */}
-          <div className="relative overflow-hidden rounded-3xl border border-zinc-800 bg-gradient-to-br from-zinc-900 via-zinc-900 to-zinc-950 p-6">
-            <div className="flex items-start justify-between">
+          <div className="relative overflow-hidden rounded-3xl border border-zinc-800 bg-gradient-to-br from-zinc-900 via-zinc-900 to-zinc-950 p-5 sm:p-6">
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
                   Average Fuel Economy
                 </p>
                 <div className="mt-2 flex items-baseline gap-2 font-mono">
-                  <span className="text-5xl font-extrabold tracking-tight text-zinc-100 tabular-nums">
+                  <span className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-zinc-100 tabular-nums">
                     {metrics.averageEconomy > 0 ? metrics.averageEconomy : "--"}
                   </span>
                   <span className="text-sm font-semibold text-zinc-500">km/L</span>
@@ -110,7 +110,7 @@ export default function FuelPage() {
                 )}
               </div>
 
-              <div className="flex flex-col items-end gap-1.5">
+              <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-start gap-1.5">
                 <div className="flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-400 font-mono">
                   <Award className="h-4 w-4 text-emerald-400" />
                   <span>Best: {metrics.bestEconomy > 0 ? `${metrics.bestEconomy} km/L` : "--"}</span>
@@ -191,9 +191,9 @@ export default function FuelPage() {
                   key={log.id}
                   className="group relative rounded-2xl border border-zinc-800/80 bg-zinc-900/60 p-4 transition hover:border-zinc-750"
                 >
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <div className="flex items-center gap-2 font-mono">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-2 font-mono">
                         <span className="text-base font-bold text-zinc-100 tabular-nums">
                           {log.odometer.toLocaleString()} km
                         </span>
@@ -231,7 +231,7 @@ export default function FuelPage() {
                       </div>
                     </div>
 
-                    <div className="text-right font-mono">
+                    <div className="text-right font-mono shrink-0">
                       <p className="text-base font-bold text-zinc-100 tabular-nums">
                         ₹{log.totalCost.toFixed(0)}
                       </p>

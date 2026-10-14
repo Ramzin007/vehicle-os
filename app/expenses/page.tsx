@@ -143,25 +143,25 @@ export default function ExpensesPage() {
   return (
     <div className="flex flex-col gap-6 p-4 sm:p-6 lg:p-8">
       {/* Header & Add CTA */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-zinc-100 flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-purple-500/20 bg-purple-500/10 text-purple-400">
-              <ReceiptText className="h-5 w-5" />
+      <div className="flex items-center justify-between gap-3">
+        <div className="min-w-0 flex-1">
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-zinc-100 flex items-center gap-2.5 sm:gap-3 truncate">
+            <div className="flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-xl border border-purple-500/20 bg-purple-500/10 text-purple-400">
+              <ReceiptText className="h-4 w-4 sm:h-5 sm:w-5" />
             </div>
-            Expenses & Costs
+            <span className="truncate">Expenses & Costs</span>
           </h1>
-          <p className="text-xs text-zinc-400 mt-1">
+          <p className="text-xs text-zinc-400 mt-1 truncate">
             {activeVehicle ? `${activeVehicle.name} • ${activeVehicle.model}` : "Cost tracking & categories"}
           </p>
         </div>
 
         <button
           onClick={() => setIsAddModalOpen(true)}
-          className="flex items-center gap-2 rounded-xl bg-purple-500 px-4 py-2 text-xs font-semibold text-zinc-950 transition hover:bg-purple-400 shadow-lg shadow-purple-500/20"
+          className="flex shrink-0 items-center gap-1.5 sm:gap-2 rounded-xl bg-purple-500 px-3 sm:px-4 py-2 text-xs font-semibold text-zinc-950 transition hover:bg-purple-400 shadow-lg shadow-purple-500/20"
         >
           <Plus className="h-4 w-4" />
-          <span>Add Expense</span>
+          <span><span className="hidden xs:inline">Add </span>Expense</span>
         </button>
       </div>
 
@@ -181,12 +181,12 @@ export default function ExpensesPage() {
               </div>
             </div>
           ) : (
-            <div className="rounded-3xl border border-zinc-800 bg-gradient-to-br from-zinc-900 via-zinc-900 to-zinc-950 p-6">
+            <div className="rounded-3xl border border-zinc-800 bg-gradient-to-br from-zinc-900 via-zinc-900 to-zinc-950 p-5 sm:p-6">
               <p className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
                 Total Vehicle Investment
               </p>
-              <div className="mt-2 flex items-baseline gap-2 font-mono">
-                <span className="text-5xl font-extrabold tracking-tight text-zinc-100 tabular-nums">
+              <div className="mt-2 flex flex-wrap items-baseline gap-2 font-mono">
+                <span className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-zinc-100 tabular-nums">
                   ₹{summary?.totalSpend.toLocaleString() ?? 0}
                 </span>
                 {summary && summary.costPerKm > 0 && (
@@ -306,11 +306,11 @@ export default function ExpensesPage() {
                 {filteredExpenses.map((exp) => (
                   <div
                     key={exp.id}
-                    className="group flex items-center justify-between rounded-2xl border border-zinc-800/80 bg-zinc-900/60 p-4 transition hover:border-zinc-750"
+                    className="group flex items-center justify-between gap-3 rounded-2xl border border-zinc-800/80 bg-zinc-900/60 p-3 sm:p-4 transition hover:border-zinc-750"
                   >
-                    <div className="flex items-center gap-3.5">
+                    <div className="flex items-center gap-3 min-w-0 flex-1">
                       <div
-                        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xs font-bold font-mono"
+                        className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-xl text-xs font-bold font-mono"
                         style={{
                           backgroundColor: `${categoryColors[exp.category] || "#71717a"}20`,
                           color: categoryColors[exp.category] || "#71717a",
@@ -319,17 +319,17 @@ export default function ExpensesPage() {
                         {exp.category.slice(0, 3)}
                       </div>
 
-                      <div>
-                        <p className="text-sm font-semibold text-zinc-200">{exp.title}</p>
-                        <div className="flex items-center gap-2 text-xs text-zinc-500 mt-0.5 font-mono">
-                          <span>{new Date(exp.date).toLocaleDateString()}</span>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-semibold text-zinc-200 truncate">{exp.title}</p>
+                        <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-zinc-500 mt-0.5 font-mono">
+                          <span>{new Date(exp.date).toLocaleDateString(undefined, { month: "short", day: "numeric" })}</span>
                           {exp.odometer && <span>• {exp.odometer.toLocaleString()} km</span>}
-                          {exp.notes && <span className="font-sans italic">• {exp.notes}</span>}
+                          {exp.notes && <span className="font-sans italic truncate max-w-[120px] xs:max-w-[180px] sm:max-w-xs">• {exp.notes}</span>}
                         </div>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 font-mono">
+                    <div className="flex items-center gap-1.5 sm:gap-2 font-mono shrink-0">
                       <span className="text-sm font-bold text-zinc-100 tabular-nums">
                         ₹{exp.amount.toLocaleString()}
                       </span>
