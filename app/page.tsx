@@ -433,23 +433,31 @@ export default function Home() {
           {/* Care Score & Health Breakdown Card */}
           <section className="rounded-3xl border border-zinc-800 bg-zinc-900/60 p-5 shadow-sm">
             <div className="flex items-center justify-between gap-2 mb-4">
-              <div className="flex items-center gap-2 min-w-0">
+              <div className="flex items-center gap-2">
                 <div className="flex h-8 w-8 items-center justify-center rounded-xl border border-emerald-500/20 bg-emerald-500/10 text-emerald-400 shrink-0">
                   <Sparkles className="h-4 w-4" />
                 </div>
-                <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-200 truncate">
-                  Care Score & Health
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-200">
+                  Care Score
                 </h3>
               </div>
               <span
-                className="shrink-0 rounded-full px-2.5 py-0.5 text-[11px] sm:text-xs font-semibold border font-mono"
+                className="shrink-0 rounded-full px-2.5 py-1 text-[11px] sm:text-xs font-semibold border font-mono tracking-tight"
                 style={{
                   color: careScoreResult.color,
                   borderColor: `${careScoreResult.color}40`,
                   backgroundColor: `${careScoreResult.color}15`,
                 }}
               >
-                {careScoreResult.score}/100 • {careScoreResult.rating}
+                {careScoreResult.score}/100 • {
+                  careScoreResult.rating === "ATTENTION_NEEDED"
+                    ? "Attention"
+                    : careScoreResult.rating === "EXCELLENT"
+                    ? "Excellent"
+                    : careScoreResult.rating === "GOOD"
+                    ? "Good"
+                    : "Critical"
+                }
               </span>
             </div>
 

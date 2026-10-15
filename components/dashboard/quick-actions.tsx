@@ -42,19 +42,19 @@ export default function QuickActions({ onRefresh }: QuickActionsProps) {
           <button
             type="button"
             onClick={() => setIsFuelModalOpen(true)}
-            className="flex items-center gap-2.5 sm:gap-3 rounded-2xl border border-zinc-800/80 bg-zinc-900/60 p-3 sm:p-3.5 text-left transition hover:border-zinc-700 hover:bg-zinc-850 group w-full h-full min-h-[72px]"
+            className="flex flex-col justify-between rounded-2xl border border-zinc-800/80 bg-zinc-900/60 p-3.5 text-left transition hover:border-zinc-700 hover:bg-zinc-850 group min-h-[96px] w-full"
           >
-            <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-xl border border-emerald-500/20 bg-emerald-500/10 text-emerald-400 group-hover:scale-105 transition-transform">
-              <Fuel className="h-4 w-4 sm:h-5 sm:w-5" />
+            <div className="flex items-center justify-between w-full">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-emerald-500/20 bg-emerald-500/10 text-emerald-400 group-hover:scale-105 transition-transform">
+                <Fuel className="h-4 w-4" />
+              </div>
+              <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-400 group-hover:bg-emerald-500 group-hover:text-zinc-950 transition-colors">
+                <Plus className="h-3.5 w-3.5" />
+              </div>
             </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-xs sm:text-sm font-semibold text-zinc-100 flex items-center justify-between gap-1">
-                <span className="truncate">Add Refill</span>
-                <Plus className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
-              </p>
-              <p className="text-[11px] sm:text-xs text-zinc-400 truncate mt-0.5">
-                Log fuel & mileage
-              </p>
+            <div className="mt-3">
+              <p className="text-sm font-semibold text-zinc-100">Add Refill</p>
+              <p className="text-xs text-zinc-400 mt-0.5">Fuel & mileage</p>
             </div>
           </button>
 
@@ -62,19 +62,19 @@ export default function QuickActions({ onRefresh }: QuickActionsProps) {
           <button
             type="button"
             onClick={() => setIsServiceModalOpen(true)}
-            className="flex items-center gap-2.5 sm:gap-3 rounded-2xl border border-zinc-800/80 bg-zinc-900/60 p-3 sm:p-3.5 text-left transition hover:border-zinc-700 hover:bg-zinc-850 group w-full h-full min-h-[72px]"
+            className="flex flex-col justify-between rounded-2xl border border-zinc-800/80 bg-zinc-900/60 p-3.5 text-left transition hover:border-zinc-700 hover:bg-zinc-850 group min-h-[96px] w-full"
           >
-            <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-xl border border-cyan-500/20 bg-cyan-500/10 text-cyan-400 group-hover:scale-105 transition-transform">
-              <Wrench className="h-4 w-4 sm:h-5 sm:w-5" />
+            <div className="flex items-center justify-between w-full">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-cyan-500/20 bg-cyan-500/10 text-cyan-400 group-hover:scale-105 transition-transform">
+                <Wrench className="h-4 w-4" />
+              </div>
+              <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-cyan-500/10 text-cyan-400 group-hover:bg-cyan-500 group-hover:text-zinc-950 transition-colors">
+                <Plus className="h-3.5 w-3.5" />
+              </div>
             </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-xs sm:text-sm font-semibold text-zinc-100 flex items-center justify-between gap-1">
-                <span className="truncate">Log Service</span>
-                <Plus className="h-3.5 w-3.5 text-cyan-400 shrink-0" />
-              </p>
-              <p className="text-[11px] sm:text-xs text-zinc-400 truncate mt-0.5">
-                Maintenance task
-              </p>
+            <div className="mt-3">
+              <p className="text-sm font-semibold text-zinc-100">Log Service</p>
+              <p className="text-xs text-zinc-400 mt-0.5">Maintenance task</p>
             </div>
           </button>
 
@@ -82,38 +82,38 @@ export default function QuickActions({ onRefresh }: QuickActionsProps) {
           <button
             type="button"
             onClick={() => setIsExpenseModalOpen(true)}
-            className="flex items-center gap-2.5 sm:gap-3 rounded-2xl border border-zinc-800/80 bg-zinc-900/60 p-3 sm:p-3.5 text-left transition hover:border-zinc-700 hover:bg-zinc-850 group w-full h-full min-h-[72px]"
+            className="flex flex-col justify-between rounded-2xl border border-zinc-800/80 bg-zinc-900/60 p-3.5 text-left transition hover:border-zinc-700 hover:bg-zinc-850 group min-h-[96px] w-full"
           >
-            <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-xl border border-purple-500/20 bg-purple-500/10 text-purple-400 group-hover:scale-105 transition-transform">
-              <Receipt className="h-4 w-4 sm:h-5 sm:w-5" />
+            <div className="flex items-center justify-between w-full">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-purple-500/20 bg-purple-500/10 text-purple-400 group-hover:scale-105 transition-transform">
+                <Receipt className="h-4 w-4" />
+              </div>
+              <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-purple-500/10 text-purple-400 group-hover:bg-purple-500 group-hover:text-zinc-950 transition-colors">
+                <Plus className="h-3.5 w-3.5" />
+              </div>
             </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-xs sm:text-sm font-semibold text-zinc-100 flex items-center justify-between gap-1">
-                <span className="truncate">Add Expense</span>
-                <Plus className="h-3.5 w-3.5 text-purple-400 shrink-0" />
-              </p>
-              <p className="text-[11px] sm:text-xs text-zinc-400 truncate mt-0.5">
-                Tolls, gear, wash
-              </p>
+            <div className="mt-3">
+              <p className="text-sm font-semibold text-zinc-100">Add Expense</p>
+              <p className="text-xs text-zinc-400 mt-0.5">Tolls, gear, wash</p>
             </div>
           </button>
 
           {/* Find Fuel Stations */}
           <Link
             href="/stations"
-            className="flex items-center gap-2.5 sm:gap-3 rounded-2xl border border-zinc-800/80 bg-zinc-900/60 p-3 sm:p-3.5 text-left transition hover:border-zinc-700 hover:bg-zinc-850 group w-full h-full min-h-[72px]"
+            className="flex flex-col justify-between rounded-2xl border border-zinc-800/80 bg-zinc-900/60 p-3.5 text-left transition hover:border-zinc-700 hover:bg-zinc-850 group min-h-[96px] w-full"
           >
-            <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-xl border border-amber-500/20 bg-amber-500/10 text-amber-400 group-hover:scale-105 transition-transform">
-              <MapPin className="h-4 w-4 sm:h-5 sm:w-5" />
+            <div className="flex items-center justify-between w-full">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-amber-500/20 bg-amber-500/10 text-amber-400 group-hover:scale-105 transition-transform">
+                <MapPin className="h-4 w-4" />
+              </div>
+              <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-amber-500/10 text-amber-400 group-hover:bg-amber-500 group-hover:text-zinc-950 transition-colors">
+                <ArrowUpRight className="h-3.5 w-3.5" />
+              </div>
             </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-xs sm:text-sm font-semibold text-zinc-100 flex items-center justify-between gap-1">
-                <span className="truncate">Nearby Fuel</span>
-                <ArrowUpRight className="h-3.5 w-3.5 text-amber-400 shrink-0" />
-              </p>
-              <p className="text-[11px] sm:text-xs text-zinc-400 truncate mt-0.5">
-                GPS station finder
-              </p>
+            <div className="mt-3">
+              <p className="text-sm font-semibold text-zinc-100">Nearby Fuel</p>
+              <p className="text-xs text-zinc-400 mt-0.5">GPS station finder</p>
             </div>
           </Link>
         </div>
