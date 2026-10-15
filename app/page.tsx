@@ -431,18 +431,18 @@ export default function Home() {
           </div>
 
           {/* Care Score & Health Breakdown Card */}
-          <section className="rounded-3xl border border-zinc-800 bg-zinc-900/80 p-5">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-xl border border-emerald-500/20 bg-emerald-500/10 text-emerald-400">
+          <section className="rounded-3xl border border-zinc-800 bg-zinc-900/60 p-5 shadow-sm">
+            <div className="flex items-center justify-between gap-2 mb-4">
+              <div className="flex items-center gap-2 min-w-0">
+                <div className="flex h-8 w-8 items-center justify-center rounded-xl border border-emerald-500/20 bg-emerald-500/10 text-emerald-400 shrink-0">
                   <Sparkles className="h-4 w-4" />
                 </div>
-                <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-200">
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-200 truncate">
                   Care Score & Health
                 </h3>
               </div>
               <span
-                className="rounded-full px-2.5 py-0.5 text-xs font-semibold border font-mono"
+                className="shrink-0 rounded-full px-2.5 py-0.5 text-[11px] sm:text-xs font-semibold border font-mono"
                 style={{
                   color: careScoreResult.color,
                   borderColor: `${careScoreResult.color}40`,
@@ -454,58 +454,88 @@ export default function Home() {
             </div>
 
             {/* Sub-score meters */}
-            <div className="mt-4 flex flex-col gap-3 text-xs border-y border-zinc-800/80 py-3.5">
+            <div className="flex flex-col gap-3.5 text-xs border-y border-zinc-800/80 py-4">
               <div>
-                <div className="flex justify-between text-[11px] text-zinc-400 mb-1">
-                  <span>Maintenance Compliance</span>
-                  <span className="font-semibold text-zinc-200 font-mono">{careScoreResult.maintenancePoints}/35 pts</span>
+                <div className="flex justify-between items-center text-[11px] text-zinc-400 mb-1.5">
+                  <span className="font-medium text-zinc-300">Maintenance Compliance</span>
+                  <span className="font-semibold text-zinc-200 font-mono tabular-nums">{careScoreResult.maintenancePoints}/35 pts</span>
                 </div>
-                <div className="h-1.5 w-full bg-zinc-800 rounded-full overflow-hidden">
+                <div className="h-2 w-full bg-zinc-950 rounded-full overflow-hidden border border-zinc-800/60">
                   <div
-                    className="h-full bg-cyan-400 rounded-full"
-                    style={{ width: `${(careScoreResult.maintenancePoints / 35) * 100}%` }}
+                    className="h-full bg-cyan-400 rounded-full transition-all duration-500"
+                    style={{ width: `${Math.min(100, Math.max(0, (careScoreResult.maintenancePoints / 35) * 100))}%` }}
                   />
                 </div>
               </div>
 
               <div>
-                <div className="flex justify-between text-[11px] text-zinc-400 mb-1">
-                  <span>Document Health</span>
-                  <span className="font-semibold text-zinc-200 font-mono">{careScoreResult.documentPoints}/30 pts</span>
+                <div className="flex justify-between items-center text-[11px] text-zinc-400 mb-1.5">
+                  <span className="font-medium text-zinc-300">Document Health</span>
+                  <span className="font-semibold text-zinc-200 font-mono tabular-nums">{careScoreResult.documentPoints}/30 pts</span>
                 </div>
-                <div className="h-1.5 w-full bg-zinc-800 rounded-full overflow-hidden">
+                <div className="h-2 w-full bg-zinc-950 rounded-full overflow-hidden border border-zinc-800/60">
                   <div
-                    className="h-full bg-amber-400 rounded-full"
-                    style={{ width: `${(careScoreResult.documentPoints / 30) * 100}%` }}
+                    className="h-full bg-amber-400 rounded-full transition-all duration-500"
+                    style={{ width: `${Math.min(100, Math.max(0, (careScoreResult.documentPoints / 30) * 100))}%` }}
                   />
                 </div>
               </div>
 
               <div>
-                <div className="flex justify-between text-[11px] text-zinc-400 mb-1">
-                  <span>Fuel Tracking Regularity</span>
-                  <span className="font-semibold text-zinc-200 font-mono">{careScoreResult.refuelPoints}/20 pts</span>
+                <div className="flex justify-between items-center text-[11px] text-zinc-400 mb-1.5">
+                  <span className="font-medium text-zinc-300">Fuel Tracking Regularity</span>
+                  <span className="font-semibold text-zinc-200 font-mono tabular-nums">{careScoreResult.refuelPoints}/20 pts</span>
                 </div>
-                <div className="h-1.5 w-full bg-zinc-800 rounded-full overflow-hidden">
+                <div className="h-2 w-full bg-zinc-950 rounded-full overflow-hidden border border-zinc-800/60">
                   <div
-                    className="h-full bg-emerald-400 rounded-full"
-                    style={{ width: `${(careScoreResult.refuelPoints / 20) * 100}%` }}
+                    className="h-full bg-emerald-400 rounded-full transition-all duration-500"
+                    style={{ width: `${Math.min(100, Math.max(0, (careScoreResult.refuelPoints / 20) * 100))}%` }}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <div className="flex justify-between items-center text-[11px] text-zinc-400 mb-1.5">
+                  <span className="font-medium text-zinc-300">Odometer Tracking</span>
+                  <span className="font-semibold text-zinc-200 font-mono tabular-nums">{careScoreResult.odometerPoints}/15 pts</span>
+                </div>
+                <div className="h-2 w-full bg-zinc-950 rounded-full overflow-hidden border border-zinc-800/60">
+                  <div
+                    className="h-full bg-purple-400 rounded-full transition-all duration-500"
+                    style={{ width: `${Math.min(100, Math.max(0, (careScoreResult.odometerPoints / 15) * 100))}%` }}
                   />
                 </div>
               </div>
             </div>
 
-            {/* Recommendations */}
-            <div className="mt-4 flex flex-col gap-2">
-              <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
-                Action Items
-              </p>
-              {careScoreResult.recommendations.map((rec, i) => (
-                <div key={i} className="flex items-start gap-2 text-xs text-zinc-300">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 mt-1.5 shrink-0" />
-                  <span>{rec}</span>
+            {/* Recommendations / Action Items */}
+            <div className="mt-4 flex flex-col gap-2.5">
+              <div className="flex items-center justify-between">
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
+                  Action Items
+                </p>
+                <span className="text-[10px] font-mono text-zinc-500">
+                  {careScoreResult.recommendations.length} item{careScoreResult.recommendations.length === 1 ? "" : "s"}
+                </span>
+              </div>
+              {careScoreResult.recommendations.length === 0 ? (
+                <div className="flex items-center gap-2 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 px-3.5 py-2.5 text-xs text-emerald-400">
+                  <CheckCircle2 className="h-4 w-4 shrink-0" />
+                  <span>Vehicle health is optimal. No pending actions!</span>
                 </div>
-              ))}
+              ) : (
+                <div className="flex flex-col gap-2">
+                  {careScoreResult.recommendations.map((rec, i) => (
+                    <div
+                      key={i}
+                      className="flex items-center gap-2.5 rounded-xl border border-zinc-800/70 bg-zinc-950/50 px-3 py-2 text-xs text-zinc-300"
+                    >
+                      <span className="h-1.5 w-1.5 rounded-full bg-amber-400 shrink-0" />
+                      <span className="leading-snug">{rec}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </section>
         </div>
