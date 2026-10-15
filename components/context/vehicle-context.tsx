@@ -30,6 +30,7 @@ interface VehicleContextType {
   activeVehicle: Vehicle | null;
   setActiveVehicleId: (id: string) => void;
   refreshVehicles: () => Promise<void>;
+  logout: () => Promise<void>;
   isLoading: boolean;
 }
 
@@ -55,9 +56,38 @@ export function VehicleProvider({ children }: { children: React.ReactNode }) {
   });
   const [isLoading, setIsLoading] = useState(false);
 
+  const clearLocalData = useCallback(() => {
+    setVehicles([]);
+    setActiveVehicleIdState(null);
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.removeItem("vehicleos_cached_vehicles");
+        localStorage.removeItem("vehicleos_active_vehicle_id");
+        sessionStorage.clear();
+      } catch {}
+    }
+  }, []);
+
+  const logout = useCallback(async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch (e) {
+      console.error(e);
+    } finally {
+      clearLocalData();
+      if (typeof window !== "undefined") {
+        window.location.href = "/login";
+      }
+    }
+  }, [clearLocalData]);
+
   const refreshVehicles = useCallback(async () => {
     try {
       const res = await fetch("/api/vehicles");
+      if (res.status === 401) {
+        clearLocalData();
+        return;
+      }
       const data = await res.json();
       if (data.success && Array.isArray(data.vehicles)) {
         setVehicles(data.vehicles);
@@ -79,14 +109,21 @@ export function VehicleProvider({ children }: { children: React.ReactNode }) {
             }
             return chosenId;
           });
+        } else {
+          setActiveVehicleIdState(null);
+          if (typeof window !== "undefined") {
+            localStorage.removeItem("vehicleos_active_vehicle_id");
+          }
         }
+      } else {
+        clearLocalData();
       }
     } catch (err) {
       console.error("Failed to load vehicles:", err);
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [clearLocalData]);
 
   useEffect(() => {
     refreshVehicles();
@@ -122,6 +159,7 @@ export function VehicleProvider({ children }: { children: React.ReactNode }) {
         activeVehicle,
         setActiveVehicleId,
         refreshVehicles,
+        logout,
         isLoading,
       }}
     >

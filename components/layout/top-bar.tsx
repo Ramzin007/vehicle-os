@@ -40,7 +40,7 @@ const pageTitles: Record<string, string> = {
 export default function TopBar({ title }: TopBarProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const { vehicles, activeVehicle, setActiveVehicleId, refreshVehicles } = useVehicle();
+  const { vehicles, activeVehicle, setActiveVehicleId, refreshVehicles, logout } = useVehicle();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [isAddVehicleOpen, setIsAddVehicleOpen] = useState(false);
@@ -54,20 +54,16 @@ export default function TopBar({ title }: TopBarProps) {
       .then((data) => {
         if (data.success && data.user) {
           setCurrentUser(data.user);
+        } else {
+          setCurrentUser(null);
         }
       })
-      .catch(() => {});
+      .catch(() => setCurrentUser(null));
   }, [pathname]);
 
   const handleLogout = async () => {
-    try {
-      await fetch("/api/auth/logout", { method: "POST" });
-      setUserMenuOpen(false);
-      router.push("/login");
-      router.refresh();
-    } catch (e) {
-      console.error(e);
-    }
+    setUserMenuOpen(false);
+    await logout();
   };
 
   const currentTitle = title || pageTitles[pathname] || (activeVehicle ? activeVehicle.name : "VehicleOS");

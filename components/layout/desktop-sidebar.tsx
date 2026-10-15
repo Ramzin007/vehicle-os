@@ -39,7 +39,7 @@ const navItems = [
 export default function DesktopSidebar() {
   const pathname = usePathname();
   const router = useRouter();
-  const { vehicles, activeVehicle, setActiveVehicleId, refreshVehicles } = useVehicle();
+  const { vehicles, activeVehicle, setActiveVehicleId, refreshVehicles, logout } = useVehicle();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isAddVehicleOpen, setIsAddVehicleOpen] = useState(false);
   const [isFuelModalOpen, setIsFuelModalOpen] = useState(false);
@@ -52,19 +52,15 @@ export default function DesktopSidebar() {
       .then((data) => {
         if (data.success && data.user) {
           setCurrentUser(data.user);
+        } else {
+          setCurrentUser(null);
         }
       })
-      .catch(() => {});
-  }, []);
+      .catch(() => setCurrentUser(null));
+  }, [pathname]);
 
   const handleLogout = async () => {
-    try {
-      await fetch("/api/auth/logout", { method: "POST" });
-      router.push("/login");
-      router.refresh();
-    } catch (e) {
-      console.error(e);
-    }
+    await logout();
   };
 
   return (

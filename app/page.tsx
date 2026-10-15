@@ -99,13 +99,26 @@ export default function Home() {
   }, [activeVehicle]);
 
   const loadData = useCallback(async () => {
-    if (!activeVehicle) return;
+    if (!activeVehicle) {
+      setMaintenanceTasks([]);
+      setFuelLogs([]);
+      setDocuments([]);
+      setExpenses([]);
+      setLoading(false);
+      return;
+    }
 
     // Fetch maintenance tasks independently with 0-delay UI update
     fetch(`/api/maintenance?vehicleId=${activeVehicle.id}`)
-      .then((res) => res.json())
+      .then((res) => {
+        if (res.status === 401) {
+          setMaintenanceTasks([]);
+          return null;
+        }
+        return res.json();
+      })
       .then((data) => {
-        if (data.success && Array.isArray(data.tasks)) {
+        if (data && data.success && Array.isArray(data.tasks)) {
           setMaintenanceTasks(data.tasks);
           try {
             sessionStorage.setItem(`vehicleos_cached_tasks_${activeVehicle.id}`, JSON.stringify(data.tasks));
@@ -118,9 +131,15 @@ export default function Home() {
 
     // Fetch fuel telemetry in parallel
     fetch(`/api/fuel?vehicleId=${activeVehicle.id}`)
-      .then((res) => res.json())
+      .then((res) => {
+        if (res.status === 401) {
+          setFuelLogs([]);
+          return null;
+        }
+        return res.json();
+      })
       .then((data) => {
-        if (data.success && Array.isArray(data.logs)) {
+        if (data && data.success && Array.isArray(data.logs)) {
           setFuelLogs(data.logs);
           try {
             sessionStorage.setItem(`vehicleos_cached_fuel_logs_${activeVehicle.id}`, JSON.stringify(data.logs));
@@ -132,9 +151,15 @@ export default function Home() {
 
     // Fetch documents in parallel
     fetch(`/api/documents?vehicleId=${activeVehicle.id}`)
-      .then((res) => res.json())
+      .then((res) => {
+        if (res.status === 401) {
+          setDocuments([]);
+          return null;
+        }
+        return res.json();
+      })
       .then((data) => {
-        if (data.success && Array.isArray(data.documents)) {
+        if (data && data.success && Array.isArray(data.documents)) {
           setDocuments(data.documents);
           try {
             sessionStorage.setItem(`vehicleos_cached_documents_${activeVehicle.id}`, JSON.stringify(data.documents));
@@ -146,9 +171,15 @@ export default function Home() {
 
     // Fetch expenses in parallel
     fetch(`/api/expenses?vehicleId=${activeVehicle.id}`)
-      .then((res) => res.json())
+      .then((res) => {
+        if (res.status === 401) {
+          setExpenses([]);
+          return null;
+        }
+        return res.json();
+      })
       .then((data) => {
-        if (data.success && Array.isArray(data.expenses)) {
+        if (data && data.success && Array.isArray(data.expenses)) {
           setExpenses(data.expenses);
           try {
             sessionStorage.setItem(`vehicleos_cached_expenses_${activeVehicle.id}`, JSON.stringify(data.expenses));

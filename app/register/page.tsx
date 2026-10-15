@@ -2,11 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { ShieldCheck, User, Mail, Lock, Loader2 } from "lucide-react";
+import { User, Mail, Lock, Loader2 } from "lucide-react";
+import VehicleOsLogo from "@/components/ui/vehicle-os-logo";
 
 export default function RegisterPage() {
-  const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -30,8 +29,7 @@ export default function RegisterPage() {
         throw new Error(data.error || "Failed to create account");
       }
 
-      router.push("/");
-      router.refresh();
+      window.location.href = "/";
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Registration error");
     } finally {
@@ -44,9 +42,7 @@ export default function RegisterPage() {
       <div className="w-full max-w-md rounded-3xl border border-zinc-800 bg-zinc-900/90 p-6 sm:p-8 shadow-2xl backdrop-blur-xl">
         {/* Brand Header */}
         <div className="text-center mb-6">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-700 shadow-lg shadow-emerald-500/20 mb-3">
-            <ShieldCheck className="h-7 w-7 text-zinc-950" />
-          </div>
+          <VehicleOsLogo className="h-12 w-12 mx-auto mb-3 shadow-lg shadow-emerald-500/20" withContainer={true} />
           <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-zinc-100">
             Create Your Account
           </h1>
