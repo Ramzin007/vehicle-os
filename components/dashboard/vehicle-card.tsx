@@ -85,6 +85,34 @@ export default function VehicleCard({
     }
   };
 
+  const vehicleTypeLabel =
+    activeVehicle.type === "MOTORCYCLE"
+      ? "Motorcycle"
+      : activeVehicle.type === "CAR"
+      ? "Car"
+      : activeVehicle.type === "SCOOTER"
+      ? "Scooter"
+      : activeVehicle.type || "Vehicle";
+
+  const makeName = activeVehicle.make?.trim() || "";
+  const modelName = (activeVehicle.model || activeVehicle.name || "").trim();
+  const modelHasMake = makeName && modelName.toLowerCase().includes(makeName.toLowerCase());
+
+  const subtitleParts: string[] = [];
+  if (makeName && !modelHasMake) {
+    subtitleParts.push(makeName);
+  }
+  if (activeVehicle.year) {
+    subtitleParts.push(String(activeVehicle.year));
+  }
+  if (activeVehicle.fuelType) {
+    const formattedFuel =
+      activeVehicle.fuelType.charAt(0).toUpperCase() +
+      activeVehicle.fuelType.slice(1).toLowerCase();
+    subtitleParts.push(formattedFuel);
+  }
+  const subtitleText = subtitleParts.length > 0 ? subtitleParts.join(" • ") : vehicleTypeLabel;
+
   return (
     <section className="relative overflow-hidden rounded-3xl border border-zinc-800/90 bg-gradient-to-b from-zinc-900 via-zinc-900/90 to-zinc-950 p-5 shadow-xl">
       {/* Decorative ambient glow */}
@@ -102,7 +130,7 @@ export default function VehicleCard({
             ) : (
               <Car className="h-3.5 w-3.5 text-cyan-400" />
             )}
-            <span>{activeVehicle.make || "Vehicle"}</span>
+            <span>{vehicleTypeLabel}</span>
           </div>
 
           {activeVehicle.registrationNumber && (
@@ -122,10 +150,10 @@ export default function VehicleCard({
       <div className="mt-4 flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-zinc-100 truncate">
-            {activeVehicle.model || activeVehicle.name}
+            {modelName}
           </h2>
           <p className="text-xs text-zinc-400 mt-0.5 truncate">
-            {activeVehicle.make || activeVehicle.name} {activeVehicle.year ? `• ${activeVehicle.year}` : ""}
+            {subtitleText}
           </p>
         </div>
 
